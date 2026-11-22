@@ -68,7 +68,7 @@ body.page .ex .en{font-family:var(--f-body);word-break:normal;overflow-wrap:anyw
 body.page .ex .ok{color:var(--know);font-weight:600}
 body.page .ex .no{color:var(--dunno);font-weight:600}
 body.page .ex .ko{color:var(--muted);font-size:14px}
-body.page .blank{border-bottom:2px solid var(--omr);padding:0 6px;font-weight:600;color:var(--omr)}
+body.page .blank{display:inline-block;min-width:3.5em;border-bottom:2px solid var(--omr);padding:0 6px;font-weight:600;color:var(--omr);line-height:1.2}
 /* 앱으로 가는 링크 */
 body.page .cta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:28px 0 0;padding:16px;border:1.5px solid var(--omr);border-radius:12px;background:var(--omr-soft)}
 body.page .cta p{margin:0;flex:1 1 220px;font-size:15px}
