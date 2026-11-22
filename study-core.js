@@ -63,6 +63,30 @@
     return 'learn';
   }
 
+  /* ---------- LC 음성: TOEIC에 나오는 억양(미국·영국·호주/뉴질랜드·캐나다)을 돌아가며 배정 ---------- */
+  // 기기에 실제로 있는 음성만 쓴다. 억양은 음성의 언어 코드(en-US 등)로만 판단한다.
+  const ACCENTS = [
+    { k: 'US', name: '미국', re: /^en[-_]US\b/i },
+    { k: 'GB', name: '영국', re: /^en[-_]GB\b/i },
+    { k: 'AU', name: '호주', re: /^en[-_](AU|NZ)\b/i },
+    { k: 'CA', name: '캐나다', re: /^en[-_]CA\b/i }
+  ];
+  function accentGroups(voices) {
+    return ACCENTS.map(a => ({ k: a.k, name: a.name, v: (voices || []).filter(x => a.re.test(x.lang || '')) })).filter(g => g.v.length);
+  }
+  // speakers: 등장 순서대로의 화자 목록, seed: 세트마다 고정된 수(같은 세트는 늘 같은 배정)
+  // 같은 세트 안에서는 화자마다 다른 억양을 먼저 쓰고, 억양 수보다 화자가 많으면 같은 억양의 다른 음성을 쓴다.
+  function assignVoices(speakers, voices, seed) {
+    const out = {}, g = accentGroups(voices); seed = Math.abs(seed | 0);
+    if (!g.length) { speakers.forEach((sp, k) => { out[sp] = voices && voices.length ? { voice: voices[k % voices.length], accent: null } : null; }); return out; }
+    const start = seed % g.length;
+    speakers.forEach((sp, k) => {
+      const grp = g[(start + k) % g.length], round = Math.floor(k / g.length);
+      out[sp] = { voice: grp.v[(seed + round) % grp.v.length], accent: grp.k };
+    });
+    return out;
+  }
+
   /* ---------- 기록 구조 이관 ---------- */
   function blank() {
     return { v: 1, sv: SCHEMA, u: 0, next: 0, words: {}, days: {}, wrong: {}, rc: {}, rv: {}, un: {}, ex: {}, pk: {}, mig: {}, fx: {},
@@ -204,7 +228,7 @@
   function decodeBackup(text, ctx) { try { return validateState(parseBackupText(text), ctx); } catch (e) { return null; } }
 
   const api = { SCHEMA, WORD_INT, LONG, isObj, clone, meta, curV, isStale, grade, wasAccepted, lcAnswerMap,
-    wordDecide, wordStage, blank, migrate, activity, mergeState, decodeBackup, validateState };
+    wordDecide, wordStage, ACCENTS, accentGroups, assignVoices, blank, migrate, activity, mergeState, decodeBackup, validateState };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Core = api;
 })(typeof window !== 'undefined' ? window : globalThis);

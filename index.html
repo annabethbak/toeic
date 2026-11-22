@@ -261,7 +261,7 @@ details.xd p{margin:6px 0 0}
 <script src="data-words.js?v=e8a69d95"></script>
 <script src="data-lc.js?v=9f533921"></script>
 <script src="data-meta.js?v=a0b909e0"></script>
-<script src="study-core.js?v=9e7e86f9"></script>
+<script src="study-core.js?v=ee10d8b4"></script>
 <script>
 /* ================= DATA ================= */
 // RC 필수 어휘(800점 목표)는 data-words.js의 WORD_DATA에서 읽는다. word|품사|뜻|예문
@@ -395,6 +395,11 @@ let enVoices=[];
 function loadVoices(){ try{ enVoices=speechSynthesis.getVoices().filter(v=>/^en([-_]|$)/i.test(v.lang)).sort((a,b)=>(/^en[-_]US/i.test(b.lang)?1:0)-(/^en[-_]US/i.test(a.lang)?1:0)); }catch(e){ enVoices=[]; } }
 if('speechSynthesis' in window){ loadVoices(); try{ speechSynthesis.addEventListener('voiceschanged',()=>{ loadVoices(); if(ready&&view==='set') keepScroll(render); }); }catch(e){} }
 function waitVoices(){ return enVoices.length||!('speechSynthesis' in window) ? Promise.resolve() : new Promise(r=>{ let n=0; const t=setInterval(()=>{ loadVoices(); if(enVoices.length||++n>10){ clearInterval(t); r(); } },100); }); }
+function accentInfo(){
+  const g=C.accentGroups(enVoices);
+  if(!g.length) return `이 브라우저의 영어 음성 ${enVoices.length}개 · 미국·영국·호주·캐나다 억양 음성이 없어 기본 영어 음성으로 읽어요`;
+  return `LC는 세트마다 ${g.map(x=>x.name).join('·')} 억양을 돌아가며 써요(이 브라우저에 있는 음성 기준)${g.length<4?`. ${['미국','영국','호주','캐나다'].filter(n=>!g.some(x=>x.name===n)).join('·')} 억양은 이 기기에 음성이 없어요`:''}`;
+}
 function stopAudio(){ try{ tts&&tts.stop(); }catch(e){} try{ speechSynthesis.cancel(); }catch(e){} playingId=null; paintPlay(); }
 async function speak(lines, id){
   if(playingId===id){ stopAudio(); return; }
@@ -408,11 +413,17 @@ async function speak(lines, id){
   }
   if(!('speechSynthesis' in window)){ toast('이 브라우저에서는 음성을 재생할 수 없어요. 스크립트를 보며 연습하세요.'); playingId=null; paintPlay(); return; }
   await waitVoices(); if(playingId!==id) return;
-  // 같은 재생 안에서 같은 화자는 같은 음성. 음성이 하나뿐이면 높낮이만 조금 다르게 한다(화자 구분을 보장하지 않음).
+  // LC는 세트마다 미국·영국·호주·캐나다 억양을 돌아가며 배정(기기에 있는 음성만). 같은 세트에서 같은 화자는 같은 음성.
+  // 같은 음성을 두 화자가 쓰게 되면 높낮이만 조금 다르게 한다(화자 구분을 보장하지 않음).
   const order=[]; lines.forEach(([s])=>{ if(!order.includes(s)) order.push(s); });
-  lines.forEach(([s,t],i)=>{ const u=new SpeechSynthesisUtterance(t); u.lang='en-US'; u.rate=rate*0.95; const k=order.indexOf(s);
-    if(enVoices.length){ u.voice=enVoices[k%enVoices.length]; }
-    u.pitch = enVoices.length>1 && k<enVoices.length ? 1 : [1,0.88,1.12,0.95][k%4];
+  const key=String(id).replace(/^n/,''), lc=/^p[234]-/.test(key);
+  const asg = lc ? C.assignVoices(order, enVoices, hash(key.split('-').slice(0,2).join('-'))) : null;
+  const used=[];
+  lines.forEach(([s,t],i)=>{ const u=new SpeechSynthesisUtterance(t); u.rate=rate*0.95; const k=order.indexOf(s);
+    const v = asg ? (asg[s]&&asg[s].voice) : enVoices[0];
+    if(v){ u.voice=v; u.lang=String(v.lang).replace('_','-'); } else u.lang='en-US';
+    const same=order.slice(0,k).filter(o=>{ const w=asg?(asg[o]&&asg[o].voice):enVoices[0]; return w===v; }).length;
+    u.pitch=[1,0.88,1.12,0.95][same%4];
     if(i===lines.length-1){ u.onend=()=>{ if(playingId===id){playingId=null;paintPlay();} }; u.onerror=u.onend; }
     speechSynthesis.speak(u); });
 }
@@ -797,6 +808,7 @@ function vLC(day){
     <div class="row" style="justify-content:space-between"><div><div class="eyebrow">LC · 과정 Day ${plan.i+1} / ${LC_DAYS}${plan.rep?' · 다시 풀기':''}</div><h2>오늘의 ${qs.length}문항</h2></div>
     <div style="font-family:var(--f-disp);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums">${ss.c}<span class="muted" style="font-size:14px"> / ${ss.n} 정답</span></div></div>
     <label class="toggle">음성 속도 <select id="rate">${rateOpts()}</select></label>
+    ${!tts&&('speechSynthesis' in window)?`<p class="muted" style="margin:0;font-size:12.5px">${accentInfo()}.</p>`:''}
     ${practiceHelp()}
     ${omrBlock(qs.map((q,i)=>omrRow(q,i+1,qInfo(q).order,lcRec(q,plan),'lcpk',ctx)).join(''),qs.length,ss.done)}
     <label class="toggle"><input type="checkbox" id="p2text" ${S.set.showP2?'checked':''}> Part 2 보기 문장을 미리 보기 (실전에서는 보기가 인쇄되지 않아요)</label>
@@ -1016,7 +1028,7 @@ function vSet(){
     <h2>설정</h2>
     <label class="row"><span style="min-width:150px">하루 새 단어 수</span><select id="npd">${[10,15,20,30].map(n=>`<option ${S.set.newPerDay===n?'selected':''}>${n}</option>`).join('')}</select></label>
     <label class="row"><span style="min-width:150px">음성 속도</span><select id="rate">${rateOpts()}</select></label>
-    <p class="muted" style="margin:0;font-size:13px">음성: ${tts?'claude.ai 음성 사용 중':sp?`이 브라우저의 영어 음성 ${enVoices.length}개${enVoices.length<2?' · 음성이 하나뿐이면 화자를 높낮이로만 구분해요':''}`:'이 브라우저는 음성 재생을 지원하지 않아요. 스크립트로 연습해 주세요'}. 목소리·억양은 기기와 브라우저에 따라 달라요.</p>
+    <p class="muted" style="margin:0;font-size:13px">음성: ${tts?'claude.ai 음성 사용 중':sp?accentInfo():'이 브라우저는 음성 재생을 지원하지 않아요. 스크립트로 연습해 주세요'}. 목소리·억양은 기기와 브라우저에 따라 달라요.</p>
     <div class="tip"><b>단어 복습 규칙</b> 알아요 → 다음 복습 1→3→7→14일 뒤(하루 한 단계까지), 몰라요 → 다음 날 다시 + 한 단계 내려감. 14일 단계부터는 '장기 복습 중'으로 계속 확인해요. 이 간격은 이 사이트의 기본 규칙이며 개인별 최적 간격이라는 뜻은 아니에요. 이전 버전에서 외움 체크된 단어는 '복습 제외'로 그대로 두었어요.</div>
     <div class="tip"><b>문항 안내</b> LC는 25일 × 15문항(375문항, Part 2·3·4, 시각 자료 연계 포함), RC는 25일 × 20문항(500문항, Part 5·6·7, 이중·삼중 지문 포함)이며 25일 과정 안에서 같은 문항이 다시 나오지 않습니다. 과정 Day는 이전 Day를 다 풀어야 다음 Day로 넘어가요. 단어는 800점대 어휘 ${WORDS().length}개입니다. LC·RC 모두 ETS 공식 기출이 아닌 새로 만든 연습 문제입니다. 사진이 필요한 Part 1은 포함하지 않았어요.</div>
     <div class="row">${confirmReset?`<span>모든 기록을 지울까요?</span><button class="btn" style="border-color:var(--dunno);color:var(--dunno)" data-a="resetyes">네, 초기화</button><button class="btn ghost" data-a="resetno">취소</button>`:`<button class="btn ghost" data-a="resetask">학습 기록 초기화</button>`}</div>
