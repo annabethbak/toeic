@@ -98,3 +98,8 @@ body.page .mail{font-family:var(--f-mono);font-size:16px;background:var(--chip);
 .ad-gap-top{margin-bottom:20px}
 .ad-gap-bottom{margin-top:24px}
 .ad-band{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 28px}
+
+/* 가이드 끝 버튼 묶음: 가이드 목록으로 돌아가기 + 연습하러 가기 */
+body.page .cta-btns{display:flex;flex-wrap:wrap;gap:8px}
+body.page .btn.ghost{background:var(--sheet);color:var(--omr);border:1.5px solid var(--omr);padding:8.5px 16px}
+body.page .btn.ghost:hover{background:var(--omr-soft)}
