@@ -262,6 +262,8 @@ const L = i => 'ABCD'[i];
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),1800); }
 
 /* ================= STATE / STORAGE ================= */
+// claude.ai 안에서 열릴 때(iframe)만 계정 저장·음성 기능을 최대 5초 기다린다. 일반 웹사이트에서는 기다리지 않고 바로 연다.
+const CLAUDE_WAIT = (()=>{ try{ return window.self!==window.top ? 20 : 0; }catch(e){ return 20; } })();
 const LS_KEY='toeic800-state-v1';
 function blank(){ return {v:1,u:0,next:0,words:{},days:{},wrong:{},rc:{},set:{newPerDay:15,rate:1,showP2:false}}; }
 let S = blank();
@@ -338,7 +340,7 @@ function mergeState(a,b,initial){
 }
 async function initStore(){
   try{
-    for(let i=0;i<20 && !(window.claude&&window.claude.use);i++) await new Promise(r=>setTimeout(r,250));
+    for(let i=0;i<CLAUDE_WAIT && !(window.claude&&window.claude.use);i++) await new Promise(r=>setTimeout(r,250));
     if(!(window.claude&&window.claude.use)) return;
     const [db,user] = await Promise.all([claude.use('db'), claude.use('user')]);
     if(!db||!user) return;
@@ -378,7 +380,7 @@ function WORDS(){ return RAW_WORDS; }
 
 /* ================= TTS ================= */
 let tts=null, playingId=null;
-(async()=>{ for(let i=0;i<20 && !(window.claude&&window.claude.use);i++) await new Promise(r=>setTimeout(r,250)); try{ if(window.claude&&claude.use){ tts=await claude.use('tts'); if(tts) tts.onState(({state})=>{ if(state==='idle'){ playingId=null; paintPlay(); } }); } }catch(e){} })();
+(async()=>{ for(let i=0;i<CLAUDE_WAIT && !(window.claude&&window.claude.use);i++) await new Promise(r=>setTimeout(r,250)); try{ if(window.claude&&claude.use){ tts=await claude.use('tts'); if(tts) tts.onState(({state})=>{ if(state==='idle'){ playingId=null; paintPlay(); } }); } }catch(e){} })();
 const VOICE={W:'airy',M:'rounded',M2:'buttery',N:'glassy'};
 function stopAudio(){ try{ tts&&tts.stop(); }catch(e){} try{ speechSynthesis.cancel(); }catch(e){} playingId=null; paintPlay(); }
 async function speak(lines, id){
