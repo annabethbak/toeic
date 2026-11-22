@@ -133,3 +133,14 @@ body.page .gtabs button{white-space:nowrap}
 .site-nav .in,.site-foot .in{box-sizing:border-box}
 .site-nav .logo small{font-family:var(--f-body);font-weight:500;font-size:12.5px;opacity:.75;margin-left:2px;letter-spacing:0}
 .site-foot .in a{color:var(--ink)}
+
+/* 학습하기 첫 화면 아래 소개(검색엔진이 읽는 정적 글) */
+.site-intro{box-sizing:border-box;padding-block:8px 28px;font-family:var(--f-body);color:var(--ink);line-height:1.7;font-size:15px}
+.site-intro h2{font-family:var(--f-disp);font-size:19px;margin:0 0 8px;text-wrap:balance;word-break:keep-all}
+.site-intro p,.site-intro li{word-break:keep-all;overflow-wrap:anywhere;color:var(--muted)}
+.site-intro p{margin:0 0 10px}
+.site-intro ul{margin:0 0 10px;padding-left:1.2em}
+.site-intro li{margin:3px 0}
+.site-intro b{color:var(--ink)}
+.site-intro a{color:var(--omr);text-underline-offset:3px}
+.site-intro .more{font-size:14px}
