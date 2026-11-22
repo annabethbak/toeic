@@ -77,7 +77,7 @@ body.page .btn{display:inline-block;background:var(--omr);color:#fff;text-decora
 body.page .tbl{overflow-x:auto;margin:0 0 16px}
 body.page table{border-collapse:collapse;width:100%;font-size:14.5px}
 body.page th,body.page td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
-body.page th{font-weight:700;background:var(--chip)}
+body.page th{font-weight:700;background:var(--chip);white-space:nowrap}
 /* 가이드 목록 */
 body.page .cards{list-style:none;padding:0;display:grid;gap:12px;margin:18px 0 0}
 body.page .cards li{margin:0}
