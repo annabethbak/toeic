@@ -205,7 +205,7 @@ main.wide{max-width:1180px}
 .toast.show{opacity:1}
 @media (prefers-reduced-motion:reduce){.card{transition:none}}
 
-/* 2026-11 개선: 선택·채점 상태 표시, 모드, 실전 연습, 신고, 모바일 */
+/* 2026-11 개선: 선택·채점 상태 표시, 신고, 모바일 */
 .opt{min-height:44px;flex-wrap:wrap}
 .opt .t{flex:1}
 .opt .st{margin-left:auto;font-size:12px;font-weight:700;white-space:nowrap}
@@ -215,13 +215,7 @@ main.wide{max-width:1180px}
 .omr-row .b.p{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
 .omrbox summary{cursor:pointer;font-size:13px;font-weight:600;padding:2px 0}
 .omrbox .omr2{margin-top:8px}
-.seg{display:inline-flex;justify-self:start;width:max-content;max-width:100%;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.seg button{border:0;background:var(--sheet);padding:7px 14px;font-weight:600;font-size:13.5px;color:var(--muted);min-height:36px}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
-.seg button:disabled{cursor:not-allowed;opacity:.6}
-.exbar{display:grid;gap:8px;border:1.5px solid var(--omr);border-radius:12px;padding:12px 14px;background:var(--omr-soft)}
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-.confirm-inline{display:grid;gap:8px;font-size:13.5px}
 .checkrow{gap:8px 14px}
 .linkbtn{border:0;background:transparent;padding:4px 2px;color:var(--muted);font-size:12.5px;font-weight:600;text-decoration:underline;text-underline-offset:3px;min-height:32px}
 .qtools{gap:8px 14px}.qtools:empty{display:none}
@@ -288,7 +282,6 @@ const TIPS = {
  p4:"<b>Part 4</b> 첫 문장에서 담화 종류(공지·전화 메시지·뉴스·투어)를 정하세요. 숫자와 'but' 뒤 정보는 함정으로 자주 나옵니다."
 };
 const CONTACT='worketoileforet@gmail.com';
-const RC_LIMIT_MIN=15;   // 이 사이트의 권장 시간(공식 시험 시간 아님)
 
 /* ================= UTIL ================= */
 const $ = s => document.querySelector(s);
@@ -367,7 +360,7 @@ async function initStore(){
   }catch(e){ setSync('이 브라우저에 저장 중'); }
   finally{
     // 계정 기록을 확인한 뒤에야 오늘 덱을 만들고 화면을 연다(예전 기록으로 학습이 시작되지 않도록)
-    ready=true; pauseRunningExams(); ensureToday(); keepScroll(render);
+    ready=true; ensureToday(); keepScroll(render);
     if(store.kind==='db') save(true);
   }
 }
@@ -517,10 +510,10 @@ function staleList(){
 
 /* ================= VIEWS ================= */
 let view='home', wordFilter='learning', wordQuery='', lcOverride=false, flipped=false, notesFilter='all';
-let rptOpen=null, rptReason='answer', rptChosen=null, rptMemo='', confirmSubmit=null, backTo=null, omrOpen=null;
+let rptOpen=null, rptQ=null, rptReason='answer', rptChosen=null, rptMemo='', backTo=null, omrOpen=null;
 const rvPick={}, rvShown={};
 document.getElementById('tabs').addEventListener('click',e=>{ const b=e.target.closest('button[data-v]'); if(b) go(b.dataset.v); });
-function go(v){ view=v; stopAudio(); flipped=false; rptOpen=null; confirmSubmit=null; backTo=null; document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected', b.dataset.v===v)); render(); window.scrollTo({top:0}); }
+function go(v){ view=v; stopAudio(); flipped=false; rptOpen=null; backTo=null; document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected', b.dataset.v===v)); render(); window.scrollTo({top:0}); }
 
 function render(){
   if(!ready){ $('#app').classList.remove('wide'); $('#app').innerHTML='<section class="sheet empty" role="status"><b>계정 학습 기록을 불러오는 중…</b><span class="muted" style="font-size:13px">다른 기기에서 공부한 내용까지 합친 뒤 열려요. 몇 초면 끝나요.</span></section>'; return; }
@@ -771,80 +764,41 @@ function reportText(qid,chosen){
     `선택한 보기: ${chosen?chosen:'선택 안 함'}`,`신고 사유: ${r[1]}`,`설명: ${memo||'(없음)'}`].join('\n');
 }
 function chosenLabel(qid,order,c,text){ return c===undefined||c===null?null:`(${L(order.indexOf(c))}) ${text(c)}`; }
-function reportHTML(qid,order,c,text){
-  if(rptOpen!==qid) return `<div class="row qtools"><button class="linkbtn" data-a="rpt" data-q="${qid}">오류 신고</button></div>`;
-  const chosen=chosenLabel(qid,order,c,text); rptChosen=chosen;
-  return `<div class="rpt" role="group" aria-label="오류 신고"><b>문항 오류 신고</b>
-    <label class="grid" style="gap:4px"><span style="font-size:13px">사유</span><select id="rptreason" data-q="${qid}">${reasonOpts().map(([k,l])=>`<option value="${k}" ${k===rptReason?'selected':''}>${l}</option>`).join('')}</select></label>
+// 오류 신고: LC·RC 하루 문제 화면 맨 아래에 하나. 문항 번호를 골라 신고 내용을 만든다(자동 발송 없음).
+function chosenOf(qid){
+  const isR=qid[0]==='r', order=isR?rcQ(qid).order:qInfo(qid).order, text=o=>isR?rcQ(qid).q.c[o]:qInfo(qid).ch[o];
+  const rec=isR?rcAns(qid):lcRec(qid,lcPlan()), c=rec?rec.c:(S.pk[qid]?S.pk[qid].c:undefined);
+  return chosenLabel(qid,order,c,text);
+}
+function dayReportHTML(kind,list){
+  if(rptOpen!==kind) return `<section class="sheet row" style="justify-content:space-between;gap:8px 12px"><span class="muted" style="font-size:13.5px">문제·정답·해설이 이상한 문항이 있었나요?</span><button class="btn" data-a="rpt" data-k="${kind}" data-q="${list[0].qid}">오류 신고</button></section>`;
+  if(!list.some(x=>x.qid===rptQ)) rptQ=list[0].qid;
+  rptChosen=chosenOf(rptQ);
+  return `<section class="sheet rpt" id="rptbox" role="group" aria-label="오류 신고"><b>${kind==='lc'?'LC':'RC'} 문항 오류 신고</b>
+    <label class="grid" style="gap:4px"><span style="font-size:13px">문항 번호</span><select id="rptq">${list.map(x=>`<option value="${x.qid}" ${x.qid===rptQ?'selected':''}>${x.no}번</option>`).join('')}</select></label>
+    <label class="grid" style="gap:4px"><span style="font-size:13px">사유</span><select id="rptreason">${reasonOpts().map(([k,l])=>`<option value="${k}" ${k===rptReason?'selected':''}>${l}</option>`).join('')}</select></label>
     <label class="grid" style="gap:4px"><span style="font-size:13px">설명 (선택)</span><textarea id="rptmemo" rows="2" placeholder="어떤 점이 이상한지 적어 주세요">${esc(rptMemo)}</textarea></label>
-    <pre class="rptprev" id="rptprev">${esc(reportText(qid,chosen))}</pre>
+    <pre class="rptprev" id="rptprev">${esc(reportText(rptQ,rptChosen))}</pre>
     <p class="muted" style="margin:0;font-size:12.5px">학습 기록이나 개인정보는 넣지 않아요. 복사하거나 메일 앱을 연 뒤 <b>직접 보내야</b> 접수됩니다.</p>
-    <div class="row"><button class="btn pri" data-a="rptcopy" data-q="${qid}">신고 내용 복사</button><button class="btn" data-a="rptmail" data-q="${qid}">메일 앱 열기</button><button class="btn ghost" data-a="rptclose">닫기</button></div></div>`;
-}
-function modeBar(kind,ex){
-  const m=S.set.mode==='exam'?'exam':'practice';
-  return `<div class="seg" role="group" aria-label="풀이 모드"><button data-a="mode" data-m="practice" aria-pressed="${m==='practice'}" ${ex?'disabled':''}>연습 모드</button><button data-a="mode" data-m="exam" aria-pressed="${m==='exam'}" ${ex?'disabled':''}>실전 연습</button></div>`;
-}
-function modeHelp(kind){
-  return S.set.mode==='exam'
-    ? `<p class="muted" style="margin:0;font-size:12.5px">실전 연습: 남은 문항을 한 번에 풀고 끝에 제출해 채점해요. 제출 전까지 답을 바꿀 수 있어요. ${kind==='rc'?`권장 ${RC_LIMIT_MIN}분은 이 사이트의 자체 기준이며 공식 시험 시간이 아니에요.`:''} 공식 모의고사가 아닌 자체 연습 문제이고, 점수를 TOEIC 점수로 환산하지 않아요.</p>`
-    : `<p class="muted" style="margin:0;font-size:12.5px">연습 모드: 보기를 고른 뒤 <b>정답 확인</b>을 눌러야 채점돼요. 확인 전에는 답을 바꿀 수 있어요.</p>`;
+    <div class="row"><button class="btn pri" data-a="rptcopy">신고 내용 복사</button><button class="btn" data-a="rptmail">메일 앱 열기</button><button class="btn ghost" data-a="rptclose">닫기</button></div></section>`;
 }
 
-/* ---------- 실전 연습(세트 단위 제출) ---------- */
-function exElapsed(ex){ return (ex.el||0) + (ex.ts? Date.now()-ex.ts : 0); }
-// 페이지를 다시 열면 진행 중이던 실전 연습은 마지막으로 확인된 시각까지만 계산하고 일시정지한다(닫혀 있던 시간은 세지 않음).
-function pauseRunningExams(){ let n=0; for(const k in S.ex){ const ex=S.ex[k]; if(ex&&ex.ts){ ex.el=(ex.el||0)+Math.max(0,(ex.hb||ex.ts)-ex.ts); ex.ts=null; ex.pz=true; n++; } } if(n) save(true); }
-function exStart(key,qids,limMin){ S.ex[key]={a:{},t0:Date.now(),ts:Date.now(),el:0,lim:limMin?limMin*60000:0,q:qids,u:Date.now()}; confirmSubmit=null; save(); keepScroll(render); }
-function exToggle(key){ const ex=S.ex[key]; if(!ex) return; if(ex.ts){ ex.el=exElapsed(ex); ex.ts=null; ex.pz=true; } else { ex.ts=Date.now(); ex.pz=false; } ex.u=Date.now(); save(); keepScroll(render); }
-function exQids(key){
-  if(key.startsWith('rc')){ const d=+key.split('-')[1]; return rcQs(d).map(x=>x.qid).filter(x=>{ const r=rcAns(x); return !r||judge(x,r)==='stale'; }); }
-  const plan=lcPlan(); return qList(lcItems(plan.i)).filter(x=>{ const r=lcRec(x,plan); return !r||judge(x,r)==='stale'; });
-}
-function exPick(key,qid,c){
-  if(!S.ex[key]){ const qids=exQids(key); if(!qids.includes(qid)) return; qids.forEach(x=>delete S.pk[x]); S.ex[key]={a:{},t0:Date.now(),ts:Date.now(),el:0,lim:key.startsWith('rc')?RC_LIMIT_MIN*60000:0,q:qids,u:Date.now()}; }
-  const ex=S.ex[key]; if(!ex.ts){ ex.ts=Date.now(); ex.pz=false; } ex.a[qid]=c; ex.u=Date.now(); confirmSubmit=null; save(); keepScroll(render); }
-function exBar(key,qids,noOf){
-  const ex=S.ex[key]; const un=qids.filter(q=>ex.a[q]===undefined);
-  const el=exElapsed(ex), over=ex.lim&&el>ex.lim;
-  return `<div class="exbar" role="region" aria-label="실전 연습 진행">
-    <div class="row" style="justify-content:space-between"><b>실전 연습 진행 중</b><span class="mono" id="extimer" data-k="${key}" aria-live="off">${ex.lim?(over?'권장 시간 초과 +'+mmss(el-ex.lim):'남은 시간 '+mmss(ex.lim-el)):'경과 '+mmss(el)}</span></div>
-    ${ex.pz?'<span class="chip">일시정지됨 · 답은 그대로 있어요</span>':''}${over?'<span class="chip no">권장 시간이 지났어요. 답은 그대로 있고, 제출하거나 계속 풀 수 있어요.</span>':''}
-    <span style="font-size:13px">응답 ${qids.length-un.length}/${qids.length}${un.length?` · 미응답 ${un.map(q=>`<button class="linkbtn" data-a="jump" data-q="${q}">${noOf[q]}</button>`).join(' ')}`:''}</span>
-    ${confirmSubmit===key&&un.length?`<div class="confirm-inline"><span>미응답 ${un.length}문항이 있어요. 미응답은 정답으로 세지 않고 오답노트에도 넣지 않아요. 그래도 제출할까요?</span><div class="row"><button class="btn pri" data-a="exsubmit" data-k="${key}" data-f="1">제출</button><button class="btn ghost" data-a="exnosub">계속 풀기</button></div></div>`:''}
-    <div class="row"><button class="btn pri" data-a="exsubmit" data-k="${key}">제출하고 채점</button><button class="btn" data-a="extoggle" data-k="${key}">${ex.ts?'일시정지':'이어풀기'}</button></div></div>`;
-}
-function exResultHTML(r){
-  if(!r) return '';
-  return `<section class="sheet grid" style="gap:6px" id="exres"><h2>실전 연습 결과 ${r.c}/${r.n}</h2><p class="muted" style="margin:0">정답 ${r.c} · 오답 ${r.w} · 미응답 ${r.un} · ${r.lim?`소요 ${mmss(r.ms)} (권장 ${Math.round(r.lim/60000)}분${r.ms>r.lim?', 초과':''})`:`소요 ${mmss(r.ms)}`}</p><p class="muted" style="margin:0;font-size:12.5px">점수 = 정답 수 ÷ 실전 연습 대상 문항 수. 미응답 문항은 연습 모드로 나중에 풀 수 있어요.</p></section>`;
-}
-let lastExResult={};
-setInterval(()=>{
-  const el=document.getElementById('extimer'); if(!el) return; const key=el.dataset.k, ex=S.ex[key]; if(!ex) return;
-  const t=exElapsed(ex), over=ex.lim&&t>ex.lim;
-  el.textContent= ex.lim?(over?'권장 시간 초과 +'+mmss(t-ex.lim):'남은 시간 '+mmss(ex.lim-t)):'경과 '+mmss(t);
-  if(ex.ts){ ex.hb=Date.now(); if(ex.lim && over && !ex.to){ ex.to=true; save(true); toast('권장 시간이 지났어요. 답은 그대로 있어요.'); keepScroll(render); }
-    if(Date.now()-(ex._s||0)>15000){ ex._s=Date.now(); save(true); } }
-},1000);
+const practiceHelp=()=>`<p class="muted" style="margin:0;font-size:12.5px">보기를 고른 뒤 <b>정답 확인</b>을 눌러야 채점돼요. 확인 전에는 답을 바꿀 수 있어요.</p>`;
 
 /* ---------- LC ---------- */
 function vLC(day){
   const t=today(), left=day.deck.length-day.pos, plan=lcPlan();
   const items=lcItems(plan.i), qs=qList(items), ss=lcSetStats(plan);
-  const key=(plan.rep?'lcr-'+t+'-':'lc-')+plan.i, ex=S.ex[key];
-  const exam=!!ex || S.set.mode==='exam';
   let no=0; const noOf={}; qs.forEach((q,i)=>noOf[q]=i+1);
-  const ctx={plan,ex,key,exam};
+  const ctx={plan};
   const parts={2:[],3:[],4:[]}; items.forEach(it=>parts[it.part].push(it));
-  const remaining=qs.filter(q=>{ const r=lcRec(q,plan); return !r||judge(q,r)==='stale'; });
   const suggest = left>0 && !lcOverride ? `<section class="sheet tip row" style="justify-content:space-between;gap:8px 12px"><span style="min-width:0">단어 카드 ${left}장이 남았어요. 단어를 먼저 하면 LC에 나오는 표현이 익숙해져요(권장).</span><span class="row"><button class="btn" data-a="go" data-v="vocab">단어 먼저 하기</button><button class="btn ghost" data-a="lcskip">LC 바로 시작</button></span></section>`:'';
   const head=`<section class="sheet grid" style="gap:10px">
     <div class="row" style="justify-content:space-between"><div><div class="eyebrow">LC · 과정 Day ${plan.i+1} / ${LC_DAYS}${plan.rep?' · 다시 풀기':''}</div><h2>오늘의 ${qs.length}문항</h2></div>
     <div style="font-family:var(--f-disp);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums">${ss.c}<span class="muted" style="font-size:14px"> / ${ss.n} 정답</span></div></div>
-    <div class="row" style="justify-content:space-between">${modeBar('lc',ex)}<label class="toggle">음성 속도 <select id="rate">${rateOpts()}</select></label></div>
-    ${modeHelp('lc')}
-    ${ex?exBar(key,ex.q,noOf):exam&&remaining.length?`<div class="row"><button class="btn pri" data-a="exstart" data-k="${key}" data-l="0">실전 연습 시작 (${remaining.length}문항, 시간 제한 없음)</button></div>`:''}
-    ${omrBlock(qs.map((q,i)=>omrRow(q,i+1,qInfo(q).order,lcRec(q,plan),ex?'lcpick':'ans',ctx)).join(''),qs.length,ss.done)}
+    <label class="toggle">음성 속도 <select id="rate">${rateOpts()}</select></label>
+    ${practiceHelp()}
+    ${omrBlock(qs.map((q,i)=>omrRow(q,i+1,qInfo(q).order,lcRec(q,plan),'lcpk',ctx)).join(''),qs.length,ss.done)}
     <label class="toggle"><input type="checkbox" id="p2text" ${S.set.showP2?'checked':''}> Part 2 보기 문장을 미리 보기 (실전에서는 보기가 인쇄되지 않아요)</label>
   </section>`;
   const p2=`<section class="sheet"><div class="part-head"><h2>Part 2</h2><span class="muted">질의 응답 · 질문과 보기 (A)(B)(C)가 음성으로만 나옵니다</span></div><div class="tip" style="margin:10px 0 16px">${TIPS.p2}</div>
@@ -855,26 +809,25 @@ function vLC(day){
     return `<div class="q" style="gap:12px"><div class="row"><button class="play" data-play="${sid}" data-label="대화 듣기" data-a="playset" data-id="${sid}">▶ <span>듣기</span></button><span class="muted" style="font-size:13px">Questions ${nums[0]}–${nums[2]}. ${esc(set.intro.replace('Questions refer to the following ',''))}</span></div>
       ${set.graphic?`<div class="graphic" role="table" aria-label="시각 자료"><b>${esc(set.graphic[0])}</b>${set.graphic.slice(1).map(g=>`<span>${esc(g)}</span>`).join('')}</div>`:''}
       ${set.qs.map((_,j)=>qBlock(sid+'-'+j, nums[j], ctx, true)).join('')}
-      ${ex?'':`<details class="script"><summary>스크립트 ${allDone?'보기':'(문제를 모두 푼 뒤 확인 권장)'}</summary>${scriptHTML(set.lines)}</details>`}</div>`; };
+      ${`<details class="script"><summary>스크립트 ${allDone?'보기':'(문제를 모두 푼 뒤 확인 권장)'}</summary>${scriptHTML(set.lines)}</details>`}</div>`; };
   const p3=`<section class="sheet"><div class="part-head"><h2>Part 3</h2><span class="muted">짧은 대화</span></div><div class="tip" style="margin:10px 0 6px">${TIPS.p3}</div>${parts[3].map(setBlock).join('')}</section>`;
   const p4=`<section class="sheet"><div class="part-head"><h2>Part 4</h2><span class="muted">짧은 담화</span></div><div class="tip" style="margin:10px 0 6px">${TIPS.p4}</div>${parts[4].map(setBlock).join('')}</section>`;
-  const done = ss.done>=qs.length && !ex ? `<section class="sheet grid" style="gap:8px"><h2>채점 결과 ${ss.c}/${ss.n}${ss.n?` (${Math.round(ss.c/ss.n*100)}%)`:''}</h2><p class="muted" style="margin:0">${ss.n&&ss.c/ss.n>=0.8?'정답률 80% 이상이에요. 틀린 문제는 스크립트를 보며 쉐도잉해 보세요.':'틀린 문제는 오답노트에 모였어요. 스크립트를 보며 다시 들어 보세요.'}</p><div class="row"><button class="btn" data-a="go" data-v="notes">오답노트</button><button class="btn ghost" data-a="go" data-v="home">대시보드</button></div></section>`:'';
-  return suggest+exResultHTML(lastExResult[key])+head+p2+p3+p4+done;
+  const done = ss.done>=qs.length ? `<section class="sheet grid" style="gap:8px"><h2>채점 결과 ${ss.c}/${ss.n}${ss.n?` (${Math.round(ss.c/ss.n*100)}%)`:''}</h2><p class="muted" style="margin:0">${ss.n&&ss.c/ss.n>=0.8?'정답률 80% 이상이에요. 틀린 문제는 스크립트를 보며 쉐도잉해 보세요.':'틀린 문제는 오답노트에 모였어요. 스크립트를 보며 다시 들어 보세요.'}</p><div class="row"><button class="btn" data-a="go" data-v="notes">오답노트</button><button class="btn ghost" data-a="go" data-v="home">대시보드</button></div></section>`:'';
+  return suggest+head+p2+p3+p4+done+dayReportHTML('lc',qs.map((q,i)=>({qid:q,no:i+1})));
 }
 const rateOpts=()=>[[0.85,'느리게 0.85×'],[1,'보통 1.0×'],[1.15,'빠르게 1.15×']].map(([v,l])=>`<option value="${v}" ${S.set.rate===v?'selected':''}>${l}</option>`).join('');
 const scriptHTML=lines=>lines.map(([s,tx])=>`<p><span class="sp">${s==='N'?'':s}</span>${esc(tx)}</p>`).join('');
 function qBlock(qid,no,ctx,inSet){
   const info=qInfo(qid), rec=lcRec(qid,ctx.plan), j=judge(qid,rec), graded=j==='ok'||j==='ng';
-  const ex=ctx.ex, inEx=!graded&&(ex?ex.q.includes(qid):ctx.exam);
-  const pick = inEx ? (ex?ex.a[qid]:undefined) : (!graded && S.pk[qid] ? S.pk[qid].c : undefined);
+  const pick = !graded && S.pk[qid] ? S.pk[qid].c : undefined;
   const showText = info.part!==2 || graded || S.set.showP2;
   const text=o=>info.ch[o];
-  const opts=optsHTML({qid,order:info.order,text,rec,judge:j,pick,act:inEx?'lcpick':ex?'noop':'lcpk',locked:!!ex&&!inEx,blur:!showText});
+  const opts=optsHTML({qid,order:info.order,text,rec,judge:j,pick,act:'lcpk',blur:!showText});
   const play = info.part===2 ? `<button class="play" data-play="${qid}" data-a="playp2" data-id="${qid}">▶ <span>듣기</span></button>` : '';
   const qtxt = info.part===2 ? (graded?`<span>${esc(info.q)}</span>`:`<span class="muted">Mark your answer on your answer sheet.</span>`) : `<b>${esc(info.q)}</b>`;
-  const check = !graded && !inEx && !ex ? checkRow(qid,pick,'lccheck') : '';
+  const check = !graded ? checkRow(qid,pick,'lccheck') : '';
   const expl = graded ? explHTML(qid,j,info.order,info.ex,info.xd):'';
-  return `<div class="q" id="q-${qid}" ${inSet?'style="border-top:0;margin-top:0;padding-top:0"':''}><div class="qtitle"><span class="qno">${pad(no)}</span><div class="grid" style="gap:8px;min-width:0">${play?'<div>'+play+'</div>':''}${qtxt}</div></div>${fixNoteHTML(qid,rec,text)}<div class="opts">${opts}</div>${check}${expl}${inEx?'':reportHTML(qid,info.order,graded?rec.c:pick,text)}</div>`;
+  return `<div class="q" id="q-${qid}" ${inSet?'style="border-top:0;margin-top:0;padding-top:0"':''}><div class="qtitle"><span class="qno">${pad(no)}</span><div class="grid" style="gap:8px;min-width:0">${play?'<div>'+play+'</div>':''}${qtxt}</div></div>${fixNoteHTML(qid,rec,text)}<div class="opts">${opts}</div>${check}${expl}</div>`;
 }
 function checkRow(qid,pick,act){
   const u=S.pk[qid]&&S.pk[qid].u;
@@ -914,37 +867,32 @@ function fmtLine(line,blanks){
 function docHTML(doc,blanks){ return `<article class="doc"><div class="doc-h">${esc(doc.h)}</div>${doc.b.split(/\n\s*\n/).map(p=>`<p>${p.split('\n').map(l=>fmtLine(l,blanks)).join('<br>')}</p>`).join('')}</article>`; }
 function rcQBlock(qid,no,ctx){
   const info=rcQ(qid), q=info.q, t=info.it.t, rec=rcAns(qid), j=judge(qid,rec), graded=j==='ok'||j==='ng';
-  const ex=ctx.ex, inEx=!graded&&(ex?ex.q.includes(qid):ctx.exam);
-  const pick = inEx ? (ex?ex.a[qid]:undefined) : (!graded && S.pk[qid] ? S.pk[qid].c : undefined);
+  const pick = !graded && S.pk[qid] ? S.pk[qid].c : undefined;
   const text=o=>q.c[o], ans=ansIdx(qid);
-  const opts=optsHTML({qid,order:info.order,text,rec,judge:j,pick,act:inEx?'rcpick':ex?'noop':'rcpk',locked:!!ex&&!inEx});
+  const opts=optsHTML({qid,order:info.order,text,rec,judge:j,pick,act:'rcpk'});
   let title;
   if(t===5) title=esc(q.q).replace('___', `<span class="blank ${graded?'ok':''}">${graded?esc(q.c[ans]):'_______'}</span>`);
   else if(t===6) title=`<span class="muted">지문의 빈칸 (${no})에 들어갈 가장 알맞은 것은?</span>`;
   else title=`<b>${esc(q.q)}</b>`;
-  const check = !graded && !inEx && !ex ? checkRow(qid,pick,'rccheck') : '';
+  const check = !graded ? checkRow(qid,pick,'rccheck') : '';
   const expl=graded?explHTML(qid,j,info.order,q.x,q.xd):'';
   const back = t!==5 ? `<button class="linkbtn mob" data-a="topassage" data-q="${qid}" data-p="ps-${info.d}-${info.i}">지문 다시 보기</button>`:'';
-  return `<div class="q" id="q-${qid}"><div class="qtitle"><span class="qno">${pad(no)}</span><div style="min-width:0">${title}</div></div>${fixNoteHTML(qid,rec,text)}<div class="opts">${opts}</div>${check}${expl}<div class="row qtools">${back}</div>${inEx?'':reportHTML(qid,info.order,graded?rec.c:pick,text)}</div>`;
+  return `<div class="q" id="q-${qid}"><div class="qtitle"><span class="qno">${pad(no)}</span><div style="min-width:0">${title}</div></div>${fixNoteHTML(qid,rec,text)}<div class="opts">${opts}</div>${check}${expl}<div class="row qtools">${back}</div></div>`;
 }
 function vRC(){
   if(RC===null) return `<section class="sheet empty">RC 문제를 불러오는 중…</section>`;
   if(RC===false) return `<section class="sheet empty">RC 문제 파일을 불러오지 못했어요. 페이지를 새로고침해 주세요.</section>`;
   const today_d=rcPlan(), d=rcDay||today_d, qs=rcQs(d), st=rcStats(d), rec=(S.rc||{})[d]||{a:{}}, items=RC[d-1];
-  const key='rc-'+d, ex=S.ex[key], exam=!!ex||S.set.mode==='exam';
   const noOf={}; qs.forEach(x=>noOf[x.qid]=x.no);
-  const ctx={ex,key,exam};
-  const remaining=qs.map(x=>x.qid).filter(q=>{ const r=rcAns(q); return !r||judge(q,r)==='stale'; });
+  const ctx={};
   const chips=[...Array(25)].map((_,k)=>{ const n=k+1, s=rcAnsweredCount(n); return `<button class="${s>=20?'full':s?'part':''}" aria-current="${n===d}" title="Day ${n}: ${s}/20" aria-label="Day ${n} ${s}/20" data-a="rcday" data-d="${n}">${n}</button>`; }).join('');
   const mins=rec.t0&&rec.t1?Math.round((rec.t1-rec.t0)/60000):null;
   const head=`<section class="sheet grid" style="gap:12px">
     <div class="row" style="justify-content:space-between"><div><div class="eyebrow">RC · 과정 Day ${d} / 25${d===today_d?' · 오늘':''}</div><h2>Part 5·6·7 20문항</h2>
-      <span class="muted" style="font-size:13px">Part 5 ×8 · Part 6 ×4 · Part 7 단일 지문 ×3 · ${items[10].docs.length===3?'삼중':'이중'} 지문 ×5 · 권장 ${RC_LIMIT_MIN}분(자체 기준)${mins!==null?` · 첫 풀이 소요 ${mins}분`:''}</span></div>
+      <span class="muted" style="font-size:13px">Part 5 ×8 · Part 6 ×4 · Part 7 단일 지문 ×3 · ${items[10].docs.length===3?'삼중':'이중'} 지문 ×5 · 권장 15분(자체 기준)${mins!==null?` · 첫 풀이 소요 ${mins}분`:''}</span></div>
       <div style="font-family:var(--f-disp);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums">${st.c}<span class="muted" style="font-size:14px"> / ${st.n} 정답</span></div></div>
-    ${modeBar('rc',ex)}
-    ${modeHelp('rc')}
-    ${ex?exBar(key,ex.q,noOf):exam&&remaining.length?`<div class="row"><button class="btn pri" data-a="exstart" data-k="${key}" data-l="${RC_LIMIT_MIN}">실전 연습 시작 (${remaining.length}문항 · ${RC_LIMIT_MIN}분 타이머)</button><button class="btn" data-a="exstart" data-k="${key}" data-l="0">타이머 없이 시작</button></div>`:''}
-    ${omrBlock(qs.map(x=>omrRow(x.qid,x.no,rcQ(x.qid).order,rcAns(x.qid),ex?'rcpick':'ansrc',ctx)).join(''),20,st.done)}
+    ${practiceHelp()}
+    ${omrBlock(qs.map(x=>omrRow(x.qid,x.no,rcQ(x.qid).order,rcAns(x.qid),'rcpk',ctx)).join(''),20,st.done)}
     <details><summary class="muted" style="cursor:pointer;font-size:13px;font-weight:600">다른 날짜 풀기 (25일치)</summary><div class="daypick" style="margin-top:10px">${chips}</div></details>
   </section>`;
   const p5=items.map((it,i)=>it.t===5?rcQBlock(`r${d}-${i}-0`,noOf[`r${d}-${i}-0`],ctx):'').join('');
@@ -954,11 +902,11 @@ function vRC(){
     const range=`Questions ${noOf[ids[0]]}–${noOf[ids[ids.length-1]]}`;
     return `<div class="rcset"><div class="passage" id="ps-${d}-${i}" tabindex="-1"><div class="muted" style="font-size:12.5px">${range} refer to the following ${esc(it.label.toLowerCase())}.</div>${it.docs.map(doc=>docHTML(doc,t===6?blanks:null)).join('')}</div>
       <div class="rcqs">${ids.map(qid=>rcQBlock(qid,noOf[qid],ctx)).join('')}</div></div>`; }).join('');
-  const done=st.done>=20&&!ex?`<section class="sheet grid" style="gap:8px"><h2>Day ${d} 채점 결과 ${st.c}/${st.n}</h2><p class="muted" style="margin:0">${st.n&&st.c/st.n>=0.85?'정답률 85% 이상이에요.':st.n&&st.c/st.n>=0.7?'틀린 문제의 근거 문장을 다시 찾아보세요.':'오답노트에서 근거 문장과 해설을 다시 확인해 보세요.'}</p><div class="row">${d<25?`<button class="btn" data-a="rcday" data-d="${d+1}">Day ${d+1} 미리 풀기</button>`:''}<button class="btn ghost" data-a="go" data-v="notes">오답노트</button></div></section>`:'';
-  return exResultHTML(lastExResult[key])+head+`<section class="sheet p5"><div class="part-head"><h2>Part 5</h2><span class="muted">단문 빈칸 채우기 · 문항당 20초 목표</span></div><div class="tip" style="margin:10px 0 16px"><b>Part 5</b> 해석보다 빈칸 앞뒤 구조(품사 자리, 수 일치, 시제 단서)를 먼저 보세요.</div>${p5}</section>`
+  const done=st.done>=20?`<section class="sheet grid" style="gap:8px"><h2>Day ${d} 채점 결과 ${st.c}/${st.n}</h2><p class="muted" style="margin:0">${st.n&&st.c/st.n>=0.85?'정답률 85% 이상이에요.':st.n&&st.c/st.n>=0.7?'틀린 문제의 근거 문장을 다시 찾아보세요.':'오답노트에서 근거 문장과 해설을 다시 확인해 보세요.'}</p><div class="row">${d<25?`<button class="btn" data-a="rcday" data-d="${d+1}">Day ${d+1} 미리 풀기</button>`:''}<button class="btn ghost" data-a="go" data-v="notes">오답노트</button></div></section>`:'';
+  return head+`<section class="sheet p5"><div class="part-head"><h2>Part 5</h2><span class="muted">단문 빈칸 채우기 · 문항당 20초 목표</span></div><div class="tip" style="margin:10px 0 16px"><b>Part 5</b> 해석보다 빈칸 앞뒤 구조(품사 자리, 수 일치, 시제 단서)를 먼저 보세요.</div>${p5}</section>`
     +`<section class="sheet"><div class="part-head"><h2>Part 6</h2><span class="muted">장문 빈칸 채우기 · 문장 삽입 포함</span></div>${sets(6)}</section>`
     +`<section class="sheet"><div class="part-head"><h2>Part 7</h2><span class="muted">단일 지문</span></div>${sets(7)}</section>`
-    +`<section class="sheet"><div class="part-head"><h2>Part 7</h2><span class="muted">다중 지문 · 두 문서를 연결하는 연계 문제에 주의</span></div><div class="tip" style="margin:10px 0 0"><b>연계 문제</b> 날짜·금액·조건이 다른 문서에 나눠져 있어요. 해설의 '연계' 표시를 확인하세요.</div>${sets(8)}</section>`+done;
+    +`<section class="sheet"><div class="part-head"><h2>Part 7</h2><span class="muted">다중 지문 · 두 문서를 연결하는 연계 문제에 주의</span></div><div class="tip" style="margin:10px 0 0"><b>연계 문제</b> 날짜·금액·조건이 다른 문서에 나눠져 있어요. 해설의 '연계' 표시를 확인하세요.</div>${sets(8)}</section>`+done+dayReportHTML('rc',qs);
 }
 function commitRC(qid,c,unsure){
   const prev=rcAns(qid);
@@ -972,18 +920,6 @@ function commitRC(qid,c,unsure){
   afterCommit(qid,c,v,unsure);
   return true;
 }
-function exSubmit(key){
-  const ex=S.ex[key]; if(!ex) return;
-  const lc=key.startsWith('lc'), res={n:ex.q.length,c:0,w:0,un:0,ms:exElapsed(ex),lim:ex.lim};
-  ex.q.forEach(q=>{ const c=ex.a[q]; if(c===undefined){ res.un++; return; }
-    const okc=lc?commitLC(q,c,false):commitRC(q,c,false);
-    const r=lc?lcRec(q,lcPlan()):rcAns(q), j=judge(q,r);
-    if(j==='ok') res.c++; else res.w++; void okc; });
-  if(!lc){ const d=+key.split('-')[1], rec=rcRec(d); (rec.ex=rec.ex||[]).push({t0:ex.t0,t1:Date.now(),ms:res.ms,lim:ex.lim,n:res.n,c:res.c,w:res.w,un:res.un}); }
-  delete S.ex[key]; confirmSubmit=null; lastExResult[key]=res; save(); render();
-  const r=$('#exres'); if(r) r.scrollIntoView({block:'start'}); else window.scrollTo({top:0});
-}
-
 /* ---------- 오답노트 · 복습 ---------- */
 function notesItems(){
   const active=v=>v&&String(v)[0]!=='x';
@@ -1043,8 +979,7 @@ function reviewCard(qid,flags){
   return `<div class="note" id="q-${qid}"><div class="row">${chips}<span class="muted" style="font-size:12px;font-family:var(--f-mono)">${esc(pos.label)}${S.wrong[qid]?' · '+esc(String(S.wrong[qid]).replace(/^x/,'')):''}</span></div>
     ${flags.fix?fixNoteHTML(qid,first,text):''}
     ${media?`<div class="row">${media}</div>`:''}${body}<div>${qn}</div><div class="opts">${optsH}</div>${result}
-    <div class="row">${btns}${isRC?`<button class="btn ghost" data-a="rcgo" data-d="${pos.day}">Day ${pos.day} 열기</button>`:''}</div>
-    ${reportHTML(qid,order,shown?shown.c:pick,text)}</div>`;
+    <div class="row">${btns}${isRC?`<button class="btn ghost" data-a="rcgo" data-d="${pos.day}">Day ${pos.day} 열기</button>`:''}</div></div>`;
 }
 function rvCheck(qid){
   const c=rvPick[qid]; if(c===undefined) return;
@@ -1183,13 +1118,12 @@ function omrBlock(rows,total,done){
 }
 function omrRow(qid,no,order,rec,act,ctx){
   const j=judge(qid,rec), graded=j==='ok'||j==='ng', ans=ansIdx(qid);
-  const ex=ctx&&ctx.ex, inEx=!graded&&(ex?ex.q.includes(qid):!!(ctx&&ctx.exam));
-  const pick= inEx? (ex?ex.a[qid]:undefined) : (!graded&&S.pk[qid]?S.pk[qid].c:undefined);
-  const a = inEx ? (qid[0]==='r'?'rcpick':'lcpick') : ex ? 'noop' : (qid[0]==='r'?'rcpk':'lcpk');
+  const pick= !graded&&S.pk[qid]?S.pk[qid].c:undefined;
+  const a = qid[0]==='r'?'rcpk':'lcpk';
   return `<div class="omr-row"><button class="no" data-a="jump" data-q="${qid}" aria-label="${no}번 문제로 이동">${pad(no)}</button>${order.map((orig,pos)=>{
     const cls=graded?(orig===ans?'k':orig===rec.c?'d':''):(pick===orig?'p':'');
     const lab=graded?(orig===ans?' 정답':orig===rec.c?' 내 답(오답)':''):(pick===orig?' 선택함':'');
-    return `<button class="b ${cls}" ${graded||(ex&&!inEx)?'disabled':''} data-a="${a}" data-q="${qid}" data-o="${orig}" aria-label="${no}번 ${L(pos)}${lab}">${L(pos)}</button>`; }).join('')}</div>`;
+    return `<button class="b ${cls}" ${graded?'disabled':''} data-a="${a}" data-q="${qid}" data-o="${orig}" aria-label="${no}번 ${L(pos)}${lab}">${L(pos)}</button>`; }).join('')}</div>`;
 }
 function keepScroll(fn){ const y=window.scrollY; fn(); window.scrollTo({top:y}); }
 function setPick(qid,c){ S.pk[qid]=Object.assign({},S.pk[qid],{c}); save(true); keepScroll(render); }
@@ -1200,21 +1134,12 @@ document.addEventListener('click',e=>{
   switch(a){
     case 'go': go(el.dataset.v); break;
     case 'rcgo': rcDay=+el.dataset.d||null; go('rc'); break;
-    case 'rcday': rcDay=+el.dataset.d; stopAudio(); render(); window.scrollTo({top:0}); break;
+    case 'rcday': rcDay=+el.dataset.d; rptOpen=null; stopAudio(); render(); window.scrollTo({top:0}); break;
     case 'lcskip': lcOverride=true; render(); break;
-    case 'mode': S.set.mode=el.dataset.m; save(); keepScroll(render); break;
     case 'lcpk': case 'rcpk': setPick(q,+el.dataset.o); break;
     case 'ans': case 'ansrc': setPick(q,+el.dataset.o); break;
     case 'lccheck': { const p=S.pk[q]; if(p&&commitLC(q,p.c,p.u)){ save(); keepScroll(render); } break; }
     case 'rccheck': { const p=S.pk[q]; if(p&&commitRC(q,p.c,p.u)){ save(); keepScroll(render); } break; }
-    case 'lcpick': exPick((lcPlan().rep?'lcr-'+today()+'-':'lc-')+lcPlan().i,q,+el.dataset.o); break;
-    case 'rcpick': exPick('rc-'+(+q.slice(1).split('-')[0]),q,+el.dataset.o); break;
-    case 'exstart': { const key=el.dataset.k, lim=+el.dataset.l||0, qids=exQids(key);
-      qids.forEach(x=>delete S.pk[x]); exStart(key,qids,lim); break; }
-    case 'extoggle': exToggle(el.dataset.k); break;
-    case 'exsubmit': { const key=el.dataset.k, ex=S.ex[key]; if(!ex) break; const un=ex.q.filter(x=>ex.a[x]===undefined).length;
-      if(un && !el.dataset.f){ confirmSubmit=key; keepScroll(render); break; } exSubmit(key); break; }
-    case 'exnosub': confirmSubmit=null; keepScroll(render); break;
     case 'jump': { const t=document.getElementById('q-'+q); if(t){ t.scrollIntoView({behavior:'smooth',block:'center'}); t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); const b=t.querySelector('.opt:not(:disabled)'); if(b) try{ b.focus({preventScroll:true}); }catch(_){} } break; }
     case 'topassage': { backTo=q; const p=document.getElementById(el.dataset.p); if(p){ p.scrollIntoView({behavior:'smooth',block:'start'}); try{ p.focus({preventScroll:true}); }catch(_){} } $('#backq').hidden=false; break; }
     case 'backq': { const t=document.getElementById('q-'+backTo); backTo=null; $('#backq').hidden=true; if(t){ t.scrollIntoView({behavior:'smooth',block:'center'}); const b=t.querySelector('button'); if(b) try{ b.focus({preventScroll:true}); }catch(_){} } break; }
@@ -1228,9 +1153,9 @@ document.addEventListener('click',e=>{
     case 'wf': wordFilter=el.dataset.f; render(); break;
     case 'tm': keepScroll(()=>toggleM(+el.dataset.id)); break;
     case 'delw': { const t=today(); if(S.wrong[q]&&String(S.wrong[q])[0]!=='x') S.wrong[q]='x'+t; if(S.un[q]&&String(S.un[q])[0]!=='x') S.un[q]='x'+t; delete rvShown[q]; save(); keepScroll(render); toast('복습 완료로 표시했어요. 기록은 그대로 남아 있어요'); break; }
-    case 'rpt': rptOpen=q; rptReason='answer'; rptMemo=''; keepScroll(render); break;
+    case 'rpt': rptOpen=el.dataset.k; rptQ=q; rptReason='answer'; rptMemo=''; keepScroll(render); { const b=$('#rptq'); if(b) try{ b.focus({preventScroll:true}); }catch(_){} } break;
     case 'rptclose': rptOpen=null; keepScroll(render); break;
-    case 'rptcopy': case 'rptmail': { const qq=q;
+    case 'rptcopy': case 'rptmail': { const qq=rptQ;
       const body=reportText(qq,rptChosen);
       if(a==='rptcopy'){ copyText(body).then(ok=>{ if(ok) toast('신고 내용을 복사했어요. 문의 메일에 붙여넣어 보내 주세요'); else { const pre=$('#rptprev'); if(pre){ const r=document.createRange(); r.selectNodeContents(pre); const s=getSelection(); s.removeAllRanges(); s.addRange(r); } toast('자동 복사가 안 돼요. 선택된 내용을 직접 복사해 주세요'); } }); }
       else { location.href='mailto:'+CONTACT+'?subject='+encodeURIComponent('[English800 오류 신고] '+qq)+'&body='+encodeURIComponent(body); toast('메일 앱에서 내용을 확인하고 직접 보내 주세요. 보내기 전에는 접수되지 않아요'); }
@@ -1253,13 +1178,14 @@ document.addEventListener('change',e=>{
   const t=e.target;
   if(t.id==='bkin'){ const f=t.files&&t.files[0]; t.value=''; if(f) f.text().then(startImport,()=>toast('백업 내용을 읽을 수 없어요. 지금 기록은 그대로예요')); return; }
   if(t.dataset.a2==='unsure'){ const q=t.dataset.q; S.pk[q]=Object.assign({},S.pk[q],{u:t.checked}); if(S.pk[q].c===undefined && !t.checked) delete S.pk[q]; save(true); return; }
-  if(t.id==='rptreason'){ rptReason=t.value; const pre=$('#rptprev'); if(pre) pre.textContent=reportText(t.dataset.q, rptChosen); return; }
+  if(t.id==='rptreason'){ rptReason=t.value; const pre=$('#rptprev'); if(pre) pre.textContent=reportText(rptQ, rptChosen); return; }
+  if(t.id==='rptq'){ rptQ=t.value; rptChosen=chosenOf(rptQ); const pre=$('#rptprev'); if(pre) pre.textContent=reportText(rptQ, rptChosen); return; }
   if(t.id==='p2text'){ S.set.showP2=t.checked; save(); keepScroll(render); }
   else if(t.id==='npd'){ S.set.newPerDay=+t.value; save(); toast('내일 덱부터 적용돼요'); }
   else if(t.id==='rate'){ S.set.rate=+t.value; save(); }
 });
 document.addEventListener('input',e=>{
-  if(e.target.id==='rptmemo'){ const pre=$('#rptprev'); if(pre&&rptOpen) pre.textContent=reportText(rptOpen, rptChosen); return; }
+  if(e.target.id==='rptmemo'){ const pre=$('#rptprev'); if(pre&&rptOpen) pre.textContent=reportText(rptQ, rptChosen); return; }
   if(e.target.id!=='wq') return;
   wordQuery=e.target.value; clearTimeout(window._wq);
   window._wq=setTimeout(()=>{ render(); const i=$('#wq'); if(i){ i.focus(); i.setSelectionRange(i.value.length,i.value.length); } },250);
