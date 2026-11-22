@@ -79,10 +79,17 @@ body.page table{border-collapse:collapse;width:100%;font-size:14.5px}
 body.page th,body.page td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
 body.page th{font-weight:700;background:var(--chip);white-space:nowrap}
 /* 가이드 목록: 두 묶음(시험 문제 풀이 팁 = 분홍, 공부 팁 = 초록) */
-body.page .jump{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 8px}
-body.page .jump a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:14.5px;padding:7px 14px;border-radius:99px;border:1.5px solid var(--omr);color:var(--omr);background:var(--omr-soft)}
-body.page .jump a.study{border-color:var(--know);color:var(--know);background:var(--know-soft)}
-body.page .jump small{font-family:var(--f-mono);font-size:12px;opacity:.8}
+body.page .gtabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px;padding:6px;border-radius:14px;background:var(--chip)}
+body.page .gtabs button{font:inherit;font-weight:700;font-size:15px;cursor:pointer;border:0;border-radius:10px;padding:11px 8px;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px;word-break:keep-all}
+body.page .gtabs button small{font-family:var(--f-mono);font-size:12px;font-weight:600;padding:1px 7px;border-radius:99px;background:var(--line);color:var(--muted)}
+body.page .gtabs button:hover{color:var(--ink)}
+body.page .gtabs button[aria-selected="true"]{background:var(--omr);color:#fff}
+body.page .gtabs button.study[aria-selected="true"]{background:var(--know)}
+body.page .gtabs button[aria-selected="true"] small{background:rgba(255,255,255,.25);color:#fff}
+body.page .gtabs button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+html:not(.has-tabs) body.page .gtabs{display:none}
+html.has-tabs body.page .gsec h2{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html.has-tabs body.page .gsec .sub{margin-top:16px}
 body.page .gsec{--acc:var(--omr);--acc-soft:var(--omr-soft);scroll-margin-top:16px}
 body.page .gsec.study{--acc:var(--know);--acc-soft:var(--know-soft)}
 body.page .gsec h2{display:flex;align-items:center;gap:10px;border-top:0;padding-top:0;margin-top:34px;margin-bottom:2px}
@@ -115,3 +122,5 @@ body.page .mail{font-family:var(--f-mono);font-size:16px;background:var(--chip);
 body.page .cta-btns{display:flex;flex-wrap:wrap;gap:8px}
 body.page .btn.ghost{background:var(--sheet);color:var(--omr);border:1.5px solid var(--omr);padding:8.5px 16px}
 body.page .btn.ghost:hover{background:var(--omr-soft)}
+body.page .gtabs button{white-space:nowrap}
+@media (max-width:420px){body.page .gtabs button{font-size:14.5px;padding:11px 4px}body.page .gtabs button small{display:none}}

@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap">
-<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/site.css?v=52e4b400">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8541021859032223" crossorigin="anonymous"></script>
 </head>
 <body class="page">
@@ -25,9 +25,12 @@
   <div class="eyebrow">학습 가이드</div>
   <h1>TOEIC 800점 학습 가이드</h1>
   <p class="lede">시험 문제를 푸는 요령과, 매일 공부를 이어 가는 방법을 나눠 정리했습니다. 각 가이드 끝에는 해당 내용을 연습할 수 있는 학습 화면으로 가는 버튼이 있습니다.</p>
-  <nav class="jump" aria-label="가이드 분류"><a href="#exam-tips">시험 문제 풀이 팁 <small>6</small></a><a href="#study-tips" class="study">공부 팁 <small>4</small></a></nav>
+  <div class="gtabs" role="tablist" aria-label="가이드 분류">
+    <button type="button" role="tab" id="tab-exam" aria-controls="exam-tips" aria-selected="true" data-t="exam-tips">시험 문제 풀이 팁 <small>6</small></button>
+    <button type="button" role="tab" id="tab-study" aria-controls="study-tips" aria-selected="false" data-t="study-tips" class="study">공부 팁 <small>4</small></button>
+  </div>
 
-  <section class="gsec" id="exam-tips">
+  <section class="gsec" id="exam-tips" role="tabpanel" aria-labelledby="tab-exam">
     <h2>시험 문제 풀이 팁</h2>
     <p class="sub">파트별로 정답을 고르는 순서와 함정 피하는 법</p>
     <ul class="cards">
@@ -35,12 +38,12 @@
       <li><a href="part2.html"><span class="tag">LC · Part 2</span><b>Part 2 질의응답 공략</b><span class="d">첫 단어로 의문사 잡기, 우회 응답 표현, 유사 발음과 반복 단어 함정.</span><span class="go" aria-hidden="true">읽기 →</span></a></li>
       <li><a href="part3-4.html"><span class="tag">LC · Part 3·4</span><b>Part 3·4 공략</b><span class="d">문제 먼저 읽기, 바뀐 표현 알아듣기, 시각 자료 연계와 화자 의도 파악.</span><span class="go" aria-hidden="true">읽기 →</span></a></li>
       <li><a href="part5-6.html"><span class="tag">RC · Part 5·6</span><b>Part 5·6 공략</b><span class="d">품사 자리, 수 일치, 시제 단서로 빈칸 채우기와 문장 삽입 문제.</span><span class="go" aria-hidden="true">읽기 →</span></a></li>
-      <li><a href="rc-grammar.html"><span class="tag">RC · 문법</span><b>RC 문법 유형 10가지</b><span class="d">수동태, 분사, 관계대명사, 접속사와 전치사, 비교급 등을 예문으로 정리.</span><span class="go" aria-hidden="true">읽기 →</span></a></li>
       <li><a href="part7.html"><span class="tag">RC · Part 7</span><b>Part 7 공략</b><span class="d">지문 유형별로 먼저 볼 곳, 이중·삼중 지문 연계 문제, 시간 배분.</span><span class="go" aria-hidden="true">읽기 →</span></a></li>
+      <li><a href="rc-grammar.html"><span class="tag">RC · 문법</span><b>RC 문법 유형 10가지</b><span class="d">수동태, 분사, 관계대명사, 접속사와 전치사, 비교급 등을 예문으로 정리.</span><span class="go" aria-hidden="true">읽기 →</span></a></li>
     </ul>
   </section>
 
-  <section class="gsec study" id="study-tips">
+  <section class="gsec study" id="study-tips" role="tabpanel" aria-labelledby="tab-study">
     <h2>공부 팁</h2>
     <p class="sub">계획 세우기, 단어 외우기, 시험 전날 준비</p>
     <ul class="cards">
@@ -57,6 +60,22 @@
 <div class="ad-slot bottom ad-gap-bottom" data-slot="bottom" aria-label="광고"><b>AD</b><span>하단 광고</span></div>
 </main>
 <footer class="site-foot"><div class="in"><nav aria-label="사이트 정보"><a href="../privacy.html">개인정보처리방침</a><a href="../contact.html">문의</a><a href="../guide/index.html">학습 가이드</a></nav><p>이 사이트의 모든 문제와 예문은 새로 만든 연습용이며 ETS 공식 문제가 아닙니다. 이 사이트는 ETS 및 TOEIC 시험 주관사와 관련이 없습니다.</p><p>© 2026 쑤우라이프</p></div></footer>
-<script src="../assets/ads.js" defer></script>
+<script src="../assets/ads.js?v=35ea2d90" defer></script>
+<script>
+/* 가이드 분류 탭: 한 번에 한 묶음만 보여 준다. 스크립트가 없으면 두 묶음이 모두 보인다. */
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.gtabs [role=tab]'));
+  function show(id,push){
+    tabs.forEach(function(t){ var on=t.dataset.t===id; t.setAttribute('aria-selected',on); t.tabIndex=on?0:-1; document.getElementById(t.dataset.t).hidden=!on; });
+    if(push){ try{ history.replaceState(null,'','#'+id); }catch(e){} }
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){ show(t.dataset.t,true); });
+    t.addEventListener('keydown',function(e){ if(e.key==='ArrowRight'||e.key==='ArrowLeft'){ var n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length]; n.focus(); show(n.dataset.t,true); } });
+  });
+  document.documentElement.classList.add('has-tabs');
+  show(location.hash==='#study-tips'?'study-tips':'exam-tips',false);
+})();
+</script>
 </body>
 </html>
