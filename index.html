@@ -261,7 +261,7 @@ details.xd p{margin:6px 0 0}
 <script src="data-words.js?v=e8a69d95"></script>
 <script src="data-lc.js?v=9f533921"></script>
 <script src="data-meta.js?v=a0b909e0"></script>
-<script src="study-core.js?v=ee10d8b4"></script>
+<script src="study-core.js?v=b6ec520d"></script>
 <script>
 /* ================= DATA ================= */
 // RC 필수 어휘(800점 목표)는 data-words.js의 WORD_DATA에서 읽는다. word|품사|뜻|예문
@@ -398,7 +398,7 @@ function waitVoices(){ return enVoices.length||!('speechSynthesis' in window) ? 
 function accentInfo(){
   const g=C.accentGroups(enVoices);
   if(!g.length) return `이 브라우저의 영어 음성 ${enVoices.length}개 · 미국·영국·호주·캐나다 억양 음성이 없어 기본 영어 음성으로 읽어요`;
-  return `LC는 세트마다 ${g.map(x=>x.name).join('·')} 억양을 돌아가며 써요(이 브라우저에 있는 음성 기준)${g.length<4?`. ${['미국','영국','호주','캐나다'].filter(n=>!g.some(x=>x.name===n)).join('·')} 억양은 이 기기에 음성이 없어요`:''}`;
+  return `LC는 문항마다 ${g.map(x=>x.name).join('·')} 억양을 돌아가며 써요(Part 3·4는 대화·담화마다, 이 브라우저에 있는 음성 기준)${g.length<4?`. ${['미국','영국','호주','캐나다'].filter(n=>!g.some(x=>x.name===n)).join('·')} 억양은 이 기기에 음성이 없어요`:''}`;
 }
 function stopAudio(){ try{ tts&&tts.stop(); }catch(e){} try{ speechSynthesis.cancel(); }catch(e){} playingId=null; paintPlay(); }
 async function speak(lines, id){
@@ -413,11 +413,11 @@ async function speak(lines, id){
   }
   if(!('speechSynthesis' in window)){ toast('이 브라우저에서는 음성을 재생할 수 없어요. 스크립트를 보며 연습하세요.'); playingId=null; paintPlay(); return; }
   await waitVoices(); if(playingId!==id) return;
-  // LC는 세트마다 미국·영국·호주·캐나다 억양을 돌아가며 배정(기기에 있는 음성만). 같은 세트에서 같은 화자는 같은 음성.
+  // LC는 문항마다 미국·영국·호주·캐나다 억양을 돌아가며 배정(기기에 있는 음성만). Part 3·4는 대화·담화 하나가 한 음성 단위. 같은 음성 안에서 같은 화자는 같은 목소리.
   // 같은 음성을 두 화자가 쓰게 되면 높낮이만 조금 다르게 한다(화자 구분을 보장하지 않음).
   const order=[]; lines.forEach(([s])=>{ if(!order.includes(s)) order.push(s); });
   const key=String(id).replace(/^n/,''), lc=/^p[234]-/.test(key);
-  const asg = lc ? C.assignVoices(order, enVoices, hash(key.split('-').slice(0,2).join('-'))) : null;
+  const asg = lc ? C.assignVoices(order, enVoices, C.lcVoiceSeed(key)) : null;
   const used=[];
   lines.forEach(([s,t],i)=>{ const u=new SpeechSynthesisUtterance(t); u.rate=rate*0.95; const k=order.indexOf(s);
     const v = asg ? (asg[s]&&asg[s].voice) : enVoices[0];

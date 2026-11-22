@@ -63,7 +63,7 @@
     return 'learn';
   }
 
-  /* ---------- LC 음성: TOEIC에 나오는 억양(미국·영국·호주/뉴질랜드·캐나다)을 돌아가며 배정 ---------- */
+  /* ---------- LC 음성: TOEIC에 나오는 억양(미국·영국·호주/뉴질랜드·캐나다)을 문항마다 돌아가며 배정 ---------- */
   // 기기에 실제로 있는 음성만 쓴다. 억양은 음성의 언어 코드(en-US 등)로만 판단한다.
   const ACCENTS = [
     { k: 'US', name: '미국', re: /^en[-_]US\b/i },
@@ -74,7 +74,7 @@
   function accentGroups(voices) {
     return ACCENTS.map(a => ({ k: a.k, name: a.name, v: (voices || []).filter(x => a.re.test(x.lang || '')) })).filter(g => g.v.length);
   }
-  // speakers: 등장 순서대로의 화자 목록, seed: 세트마다 고정된 수(같은 세트는 늘 같은 배정)
+  // speakers: 등장 순서대로의 화자 목록, seed: 문항마다 고정된 순서 번호(같은 문항은 늘 같은 배정)
   // 같은 세트 안에서는 화자마다 다른 억양을 먼저 쓰고, 억양 수보다 화자가 많으면 같은 억양의 다른 음성을 쓴다.
   function assignVoices(speakers, voices, seed) {
     const out = {}, g = accentGroups(voices); seed = Math.abs(seed | 0);
@@ -85,6 +85,16 @@
       out[sp] = { voice: grp.v[(seed + round) % grp.v.length], accent: grp.k };
     });
     return out;
+  }
+
+  // 문항(음성) 순서 번호: 하루 LC는 Part 2 6문항 → Part 3 2세트 → Part 4 1세트 = 음성 9개.
+  // 이 번호를 시작 억양으로 쓰면 바로 이어지는 문항끼리는 늘 다른 억양으로 시작한다.
+  function lcVoiceSeed(key) {
+    const [p, n] = String(key).split('-'), i = +n;
+    if (p === 'p2') return Math.floor(i / 6) * 9 + (i % 6);
+    if (p === 'p3') return Math.floor(i / 2) * 9 + 6 + (i % 2);
+    if (p === 'p4') return i * 9 + 8;
+    return 0;
   }
 
   /* ---------- 기록 구조 이관 ---------- */
@@ -228,7 +238,7 @@
   function decodeBackup(text, ctx) { try { return validateState(parseBackupText(text), ctx); } catch (e) { return null; } }
 
   const api = { SCHEMA, WORD_INT, LONG, isObj, clone, meta, curV, isStale, grade, wasAccepted, lcAnswerMap,
-    wordDecide, wordStage, ACCENTS, accentGroups, assignVoices, blank, migrate, activity, mergeState, decodeBackup, validateState };
+    wordDecide, wordStage, ACCENTS, accentGroups, assignVoices, lcVoiceSeed, blank, migrate, activity, mergeState, decodeBackup, validateState };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Core = api;
 })(typeof window !== 'undefined' ? window : globalThis);
