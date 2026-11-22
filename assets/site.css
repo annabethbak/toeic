@@ -124,3 +124,10 @@ body.page .btn.ghost{background:var(--sheet);color:var(--omr);border:1.5px solid
 body.page .btn.ghost:hover{background:var(--omr-soft)}
 body.page .gtabs button{white-space:nowrap}
 @media (max-width:420px){body.page .gtabs button{font-size:14.5px;padding:11px 4px}body.page .gtabs button small{display:none}}
+
+/* 메뉴·바닥글은 어느 페이지에서나 같은 크기로: 본문용 목록·문단 스타일(body.page ul/li/p)과 줄 간격을 받지 않게 고정 */
+.site-nav,.site-foot{line-height:1.6;font-size:15px}
+.site-nav .in ul{margin:0;padding:0}
+.site-nav .in li{margin:0}
+.site-foot .in p{margin:0}
+.site-nav .in,.site-foot .in{box-sizing:border-box}
