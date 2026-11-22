@@ -7,8 +7,8 @@
 
    광고 자리는 설정을 채우기 전에는 화면에 나타나지 않는다(빈 상자가 보이지 않도록).
    자리를 미리 보고 싶으면 주소 끝에 #ad-preview 를 붙여 열면 된다. 예: https://english800.kr/about.html#ad-preview */
-// TODO: AdSense 승인 후 client와 slots 값을 채우세요
-const ADS = { client: '', slots: { top: '', bottom: '' }, domains: ['english800.kr'] };
+// TODO: AdSense 승인 후 광고 단위를 만들고 slots 값을 채우세요
+const ADS = { client: 'ca-pub-8541021859032223', slots: { top: '', bottom: '' }, domains: ['english800.kr'] };
 
 (function () {
   const slots = [...document.querySelectorAll('.ad-slot')];
@@ -27,9 +27,12 @@ const ADS = { client: '', slots: { top: '', bottom: '' }, domains: ['english800.
     el.innerHTML = '<ins class="adsbygoogle" style="display:block" data-ad-client="' + ADS.client +
       '" data-ad-slot="' + ADS.slots[el.dataset.slot] + '" data-ad-format="auto" data-full-width-responsive="true"></ins>';
   });
+  // 각 페이지 <head>에 AdSense 코드가 이미 있으면 다시 불러오지 않는다
+  if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
   const s = document.createElement('script');
   s.async = true; s.crossOrigin = 'anonymous';
   s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(ADS.client);
   document.head.appendChild(s);
+  }
   on.forEach(() => { (window.adsbygoogle = window.adsbygoogle || []).push({}); });
 })();
