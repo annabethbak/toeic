@@ -3,7 +3,7 @@
 사용법: python3 scripts/set-base-url.py https://새도메인
 현재 주소는 아래 BASE_URL 한 곳에 기록되며, 실행하면 이 값도 함께 바뀐다."""
 import sys, pathlib
-BASE_URL = "https://toeic.ssuulife.kr"   # TODO: 실제 도메인이 다르면 이 스크립트로 바꾸세요
+BASE_URL = "https://english800.kr"   # TODO: 실제 도메인이 다르면 이 스크립트로 바꾸세요
 new = sys.argv[1].rstrip('/') if len(sys.argv) > 1 else sys.exit(__doc__)
 root = pathlib.Path(__file__).resolve().parent.parent
 n = 0

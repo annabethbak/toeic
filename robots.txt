@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://toeic.ssuulife.kr/sitemap.xml
+Sitemap: https://english800.kr/sitemap.xml
