@@ -204,17 +204,6 @@ main.wide{max-width:1180px}
 .toast.show{opacity:1}
 @media (prefers-reduced-motion:reduce){.card{transition:none}}
 
-/* ad slots: static (outside #app) so re-renders never reload ads; kept away from answer buttons */
-.ad-slot{display:grid;place-items:center;gap:2px;border:1.5px dashed var(--line);border-radius:12px;background:var(--sheet);color:var(--muted);text-align:center;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;overflow:hidden;max-width:100%}
-.ad-slot b{font-weight:600;color:var(--omr);letter-spacing:.14em}
-.ad-slot.live{border:0;background:transparent;display:block}
-.ad-band{padding-block:14px 0}
-.ad-band .ad-slot{min-height:90px}
-.ad-band.bottom{padding-block:0 28px}
-.ad-band.bottom .ad-slot{min-height:250px}
-.ad-rail{display:none}
-@media (min-width:1500px){.ad-rail{display:block;position:fixed;top:140px;right:max(16px,env(safe-area-inset-right,0px));width:160px}.ad-rail .ad-slot{min-height:600px}}
-.ad-note{font-size:10px;color:var(--muted);text-align:center;margin-top:4px;font-family:var(--f-mono)}
 </style>
 
 <nav class="site-nav" aria-label="사이트 메뉴"><div class="in"><a class="logo" href="index.html">TOEIC 800점 25일 스터디룸</a><ul><li><a class="l" href="guide/index.html">학습 가이드</a></li><li><a class="l" href="index.html" aria-current="page">학습하기</a></li><li><a class="l" href="about.html">소개</a></li><li><a class="l" href="contact.html">문의</a></li></ul></div></nav>
@@ -233,33 +222,12 @@ main.wide{max-width:1180px}
     </nav>
   </div>
 </header>
-<div class="wrap ad-band top"><div class="ad-slot" data-slot="top" aria-label="광고 영역"><b>AD</b><span>상단 배너 · 728×90 / 반응형</span></div></div>
 <main class="wrap" id="app"></main>
-<div class="wrap ad-band bottom"><div class="ad-slot" data-slot="bottom" aria-label="광고 영역"><b>AD</b><span>하단 광고 · 336×280 / 반응형</span></div></div>
-<!-- TODO: 아래 ADS 설정(client, slots, domains)을 AdSense 계정 값으로 채우세요 -->
-<aside class="ad-rail"><div class="ad-slot" data-slot="side" aria-label="광고 영역"><b>AD</b><span>사이드 광고 · 160×600</span></div></aside>
+<div class="ad-band"><div class="ad-slot bottom" data-slot="bottom" aria-label="광고"><b>AD</b><span>하단 광고</span></div></div>
 <footer class="site-foot"><div class="in"><nav aria-label="사이트 정보"><a href="privacy.html">개인정보처리방침</a><a href="contact.html">문의</a><a href="guide/index.html">학습 가이드</a></nav><p>이 사이트의 모든 문제와 예문은 새로 만든 연습용이며 ETS 공식 문제가 아닙니다. 이 사이트는 ETS 및 TOEIC 시험 주관사와 관련이 없습니다.</p><p>© 2026 쑤우라이프</p></div></footer>
 <div class="toast" id="toast"></div>
 
-<script>
-/* ===== Google AdSense 설정 =====
-   1) client: AdSense 게시자 ID (ca-pub-로 시작)
-   2) slots: AdSense에서 만든 광고 단위의 data-ad-slot 번호
-   3) domains: AdSense에 등록·승인된 내 도메인. 여기 적힌 주소에서 열릴 때만 실제 광고를 불러오고,
-      그 밖(claude.ai 미리보기 등)에서는 자리 표시만 보여 준다. */
-const ADS={ client:'', slots:{top:'', bottom:'', side:''}, domains:[] };
-(function(){
-  const h=location.hostname;
-  const ok=ADS.client && ADS.domains.some(d=>h===d||h.endsWith('.'+d));
-  if(!ok) return;
-  const live=[...document.querySelectorAll('.ad-slot')].filter(el=>ADS.slots[el.dataset.slot]);
-  live.forEach(el=>{ el.classList.add('live'); el.innerHTML='<ins class="adsbygoogle" style="display:block" data-ad-client="'+ADS.client+'" data-ad-slot="'+ADS.slots[el.dataset.slot]+'" data-ad-format="'+(el.dataset.slot==='side'?'vertical':'auto')+'" data-full-width-responsive="true"></ins>'; });
-  const s=document.createElement('script'); s.async=true; s.crossOrigin='anonymous';
-  s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+encodeURIComponent(ADS.client);
-  document.head.appendChild(s);
-  live.forEach(()=>{ (window.adsbygoogle=window.adsbygoogle||[]).push({}); });
-})();
-</script>
+<script src="assets/ads.js"></script>
 <script src="data-words.js"></script>
 <script src="data-lc.js"></script>
 <script>

@@ -87,3 +87,14 @@ body.page .cards b{display:block;font-family:var(--f-disp);font-size:17px;color:
 body.page .cards span{display:block;font-size:14.5px;color:var(--muted);margin-top:2px}
 body.page .word{font-family:var(--f-disp);font-weight:700}
 body.page .mail{font-family:var(--f-mono);font-size:16px;background:var(--chip);padding:2px 8px;border-radius:6px;overflow-wrap:anywhere}
+
+/* ---------- 광고 자리 ----------
+   설정 전에는 숨김. 실제 광고가 붙으면 .live, #ad-preview 로 열면 .preview 로 보인다. */
+.ad-slot{display:none;max-width:100%;overflow:hidden}
+.ad-slot.live{display:block}
+.ad-slot.preview{display:grid;place-items:center;gap:2px;min-height:120px;border:1.5px dashed var(--line);border-radius:12px;background:var(--sheet);color:var(--muted);text-align:center;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em}
+.ad-slot.preview b{font-weight:600;color:var(--omr);letter-spacing:.14em}
+.ad-slot.preview.bottom{min-height:250px}
+.ad-gap-top{margin-bottom:20px}
+.ad-gap-bottom{margin-top:24px}
+.ad-band{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 28px}
