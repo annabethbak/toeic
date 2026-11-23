@@ -144,3 +144,12 @@ body.page .gtabs button{white-space:nowrap}
 .site-intro b{color:var(--ink)}
 .site-intro a{color:var(--omr);text-underline-offset:3px}
 .site-intro .more{font-size:14px}
+/* 상표 고지: 읽기 쉬운 크기·색으로 (ETS 지침) */
+.site-foot .in p.tm{color:var(--ink);font-weight:500}
+
+/* 광고: 버튼과 떨어뜨리고(오클릭 방지), 실제 광고 자리를 미리 확보해 화면 밀림을 막는다 */
+.ad-slot.bottom.ad-gap-bottom{margin-top:48px}
+.ad-band{padding-block:40px 28px}
+.ad-slot.live{min-height:280px;padding-top:4px}
+.ad-slot.live::before,.ad-slot.preview::before{content:"광고";display:block;font-family:var(--f-body);font-size:11px;letter-spacing:.04em;color:var(--muted);margin-bottom:4px;text-align:left}
+.ad-slot.live:has(> ins[data-ad-status="unfilled"]){display:none}
