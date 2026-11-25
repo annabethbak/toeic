@@ -114,7 +114,7 @@
     speakers.forEach(sp => {
       const a = out[sp]; if (!a) return;
       const n = seen.get(a.voice) || 0; seen.set(a.voice, n + 1);
-      a.pitch = a.fallback ? [0.62, 0.74][n % 2] : [1, 1.12, 0.9, 1.05][n % 4];
+      a.pitch = a.fallback ? [0.82, 0.92][n % 2] : [1, 1.1, 0.92, 1.05][n % 4];   // 너무 낮추면 소리가 뭉개져서 0.82까지만
     });
     return out;
   }
@@ -140,7 +140,7 @@
   /* ---------- 기록 구조 이관 ---------- */
   function blank() {
     return { v: 1, sv: SCHEMA, u: 0, next: 0, words: {}, days: {}, wrong: {}, rc: {}, rv: {}, un: {}, ex: {}, pk: {}, mig: {}, fx: {},
-      set: { newPerDay: 15, rate: 1, showP2: false, mode: 'practice' } };
+      set: { newPerDay: 15, rate: 1, showP2: false, mode: 'practice', vM: '', vF: '' } };
   }
   // 옛 기록(sv 없음)을 새 구조로 옮긴다. 기존 값은 지우지 않는다.
   function migrate(st, ctx) {

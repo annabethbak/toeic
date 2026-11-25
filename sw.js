@@ -4,7 +4,7 @@
      (페이지가 ?v=해시로 파일을 부르므로, 파일이 바뀌면 새 주소로 다시 받는다.)
    - 광고(AdSense)와 그 밖의 외부 요청은 건드리지 않는다. Google Fonts만 저장해 둔다.
    파일 목록이나 동작을 바꾸면 VERSION을 올린다. */
-const VERSION = 'e800-v2';
+const VERSION = 'e800-v3';
 const CORE = [
   '/', '/index.html', '/offline.html',
   '/assets/site.css', '/assets/ads.js',
