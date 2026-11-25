@@ -893,7 +893,7 @@ function vLC(day){
     <div class="row" style="justify-content:space-between"><div><div class="eyebrow">LC · 과정 Day ${plan.i+1} / ${LC_DAYS}${plan.rep?' · 다시 풀기':''}</div><h2>오늘의 ${qs.length}문항</h2></div>
     <div style="font-family:var(--f-disp);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums">${ss.c}<span class="muted" style="font-size:14px"> / ${ss.n} 정답</span></div></div>
     <label class="toggle">음성 속도 <select id="rate">${rateOpts()}</select></label>
-    ${hasLcAudio()?`<p class="muted" style="margin:0;font-size:12.5px">LC 음성: 미리 만든 음성 파일(남자는 남성·여자는 여성 목소리, 미국·영국·호주 억양)로 재생돼요.</p>`:!tts&&('speechSynthesis' in window)?`<p class="muted" style="margin:0;font-size:12.5px">${accentInfo()}.</p>`:''}
+    ${hasLcAudio()?`<p class="muted" style="margin:0;font-size:12.5px">LC 음성: 미리 만든 음성 파일(미국·영국·호주 억양)로 재생돼요.</p>`:!tts&&('speechSynthesis' in window)?`<p class="muted" style="margin:0;font-size:12.5px">${accentInfo()}.</p>`:''}
     ${practiceHelp()}
     ${omrBlock(qs.map((q,i)=>omrRow(q,i+1,qInfo(q).order,lcRec(q,plan),'lcpk',ctx)).join(''),qs.length,ss.done)}
     <label class="toggle"><input type="checkbox" id="p2text" ${S.set.showP2?'checked':''}> Part 2 보기 문장을 미리 보기 (실전에서는 보기가 인쇄되지 않아요)</label>
@@ -1159,7 +1159,7 @@ function vSet(){
     <h2>설정</h2>
     <label class="row"><span style="min-width:150px">하루 새 단어 수</span><select id="npd">${[10,15,20,30].map(n=>`<option ${S.set.newPerDay===n?'selected':''}>${n}</option>`).join('')}</select></label>
     <label class="row"><span style="min-width:150px">음성 속도</span><select id="rate">${rateOpts()}</select></label>
-    <p class="muted" style="margin:0;font-size:13px">음성: ${hasLcAudio()?'LC 문제는 미리 만든 음성 파일(남자는 남성·여자는 여성 목소리, 미국·영국·호주 억양)로 재생돼요. 단어 발음은 기기의 영어 음성으로 읽어요.':tts?'claude.ai 음성 사용 중.':sp?'기기의 영어 음성으로 읽어요.':'이 브라우저는 음성 재생을 지원하지 않아요. 스크립트로 연습해 주세요.'}</p>
+    <p class="muted" style="margin:0;font-size:13px">음성: ${hasLcAudio()?'LC 문제는 미리 만든 음성 파일(미국·영국·호주 억양)로 재생돼요. 단어 발음은 기기의 영어 음성으로 읽어요.':tts?'claude.ai 음성 사용 중.':sp?'기기의 영어 음성으로 읽어요.':'이 브라우저는 음성 재생을 지원하지 않아요. 스크립트로 연습해 주세요.'}</p>
     <div class="tip"><b>단어 복습 규칙</b> 알아요 → 다음 복습 1→3→7→14일 뒤(하루 한 단계까지), 몰라요 → 다음 날 다시 + 한 단계 내려감. 14일 단계부터는 '장기 복습 중'으로 계속 확인해요. 이 간격은 이 사이트의 기본 규칙이며 개인별 최적 간격이라는 뜻은 아니에요. 이전 버전에서 외움 체크된 단어는 '복습 제외'로 그대로 두었어요.</div>
     <div class="tip"><b>문항 안내</b> LC는 25일 × 15문항(375문항, Part 2·3·4, 시각 자료 연계 포함), RC는 25일 × 20문항(500문항, Part 5·6·7, 이중·삼중 지문 포함)이며 25일 과정 안에서 같은 문항이 다시 나오지 않습니다. 과정 Day는 이전 Day를 다 풀어야 다음 Day로 넘어가요. 단어는 800점대 어휘 ${WORDS().length}개입니다. LC·RC 모두 ETS 공식 기출이 아닌 새로 만든 연습 문제입니다. 사진이 필요한 Part 1은 포함하지 않았어요.</div>
     <div class="row">${confirmReset?`<span>모든 기록을 지울까요?</span><button class="btn" style="border-color:var(--dunno);color:var(--dunno)" data-a="resetyes">네, 초기화</button><button class="btn ghost" data-a="resetno">취소</button>`:`<button class="btn ghost" data-a="resetask">학습 기록 초기화</button>`}</div>
