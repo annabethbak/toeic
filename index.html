@@ -295,7 +295,7 @@ details.xd p{margin:6px 0 0}
 <script src="assets/ads.js?v=c54966ad"></script>
 <script src="data-words.js?v=805e0c3d"></script>
 <script src="data-lc.js?v=9f533921"></script>
-<script src="data-audio.js?v=1791a99c"></script>
+<script src="data-audio.js?v=7165a222"></script>
 <script src="data-meta.js?v=a0b909e0"></script>
 <script src="study-core.js?v=219361c5"></script>
 <script>
@@ -893,7 +893,7 @@ function vLC(day){
     <div class="row" style="justify-content:space-between"><div><div class="eyebrow">LC · 과정 Day ${plan.i+1} / ${LC_DAYS}${plan.rep?' · 다시 풀기':''}</div><h2>오늘의 ${qs.length}문항</h2></div>
     <div style="font-family:var(--f-disp);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums">${ss.c}<span class="muted" style="font-size:14px"> / ${ss.n} 정답</span></div></div>
     <label class="toggle">음성 속도 <select id="rate">${rateOpts()}</select></label>
-    ${!tts&&('speechSynthesis' in window)?`<p class="muted" style="margin:0;font-size:12.5px">${accentInfo()}.</p>`:''}
+    ${hasLcAudio()?`<p class="muted" style="margin:0;font-size:12.5px">LC 음성: 미리 만든 음성 파일(남자는 남성·여자는 여성 목소리, 미국·영국·호주 억양)로 재생돼요.</p>`:!tts&&('speechSynthesis' in window)?`<p class="muted" style="margin:0;font-size:12.5px">${accentInfo()}.</p>`:''}
     ${practiceHelp()}
     ${omrBlock(qs.map((q,i)=>omrRow(q,i+1,qInfo(q).order,lcRec(q,plan),'lcpk',ctx)).join(''),qs.length,ss.done)}
     <label class="toggle"><input type="checkbox" id="p2text" ${S.set.showP2?'checked':''}> Part 2 보기 문장을 미리 보기 (실전에서는 보기가 인쇄되지 않아요)</label>
