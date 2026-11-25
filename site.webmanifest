@@ -1,13 +1,72 @@
 {
+  "id": "/",
   "name": "English800 — 25일 무료 영어 듣기·독해 학습",
   "short_name": "English800",
+  "description": "회원가입 없이 매일 단어 카드, LC 15문항, RC 20문항을 풀고 오답노트로 복습하는 무료 영어 듣기·독해 학습 앱입니다. TOEIC® 시험 대비 자체 제작 연습 문제를 제공합니다.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#1b2240",
   "theme_color": "#1b2240",
   "lang": "ko",
+  "dir": "ltr",
+  "categories": [
+    "education"
+  ],
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/app/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/app/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/app/screen-1-home.png",
+      "sizes": "540x960",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "오늘 할 일과 학습 현황"
+    },
+    {
+      "src": "/assets/app/screen-2-vocab.png",
+      "sizes": "540x960",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "알아요·몰라요로 넘기는 단어 카드"
+    },
+    {
+      "src": "/assets/app/screen-3-rc-timer.png",
+      "sizes": "540x960",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "파트별 타이머가 있는 RC 풀기"
+    },
+    {
+      "src": "/assets/app/screen-4-guides.png",
+      "sizes": "540x960",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "시험 문제 풀이 팁과 공부 팁"
+    }
   ]
 }
