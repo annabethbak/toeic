@@ -129,6 +129,18 @@ h3{font-size:16px}
 
 /* LC */
 .part-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+/* RC 파트별 타이머: 남은 시간을 거꾸로 세고, 목표를 넘기면 +초과 시간 */
+.rtimer{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;margin:10px 0 4px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.rtimer .rt-lab{font-size:12.5px;color:var(--muted);font-weight:600}
+.rtimer .rt-time{font-family:var(--f-mono);font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;min-width:3.4em;margin-right:auto}
+.rtimer.run{border-color:var(--omr)}
+.rtimer.over .rt-time{color:var(--dunno)}
+.rtimer .btn{padding:6px 12px;font-size:13px}
+.rtimer .rt-go[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+#rtfloat{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:15;display:flex;align-items:center;gap:8px;padding:6px 6px 6px 12px;border-radius:99px;background:var(--ink);color:var(--sheet);box-shadow:0 6px 20px -8px rgba(0,0,0,.45);font-size:13px}
+#rtfloat b{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:15px}
+#rtfloat.over b{color:#ff9a87}
+#rtfloat button{border:0;border-radius:99px;padding:5px 12px;font:inherit;font-weight:700;background:var(--sheet);color:var(--ink);cursor:pointer}
 .q{border-top:1px dashed var(--line);padding-top:16px;margin-top:16px;display:grid;gap:10px}
 .q:first-of-type{border-top:0;margin-top:0;padding-top:0}
 .qtitle{display:flex;gap:10px;align-items:flex-start}
@@ -559,6 +571,7 @@ function render(){
   el.classList.toggle('wide', view==='rc');
   el.innerHTML = ({home:vHome,vocab:vVocab,lc:vLC,rc:vRC,words:vWords,notes:vNotes,set:vSet})[view](day);
   if(view==='vocab') bindDeck();
+  rtPaint();
   paintPlay();
   if(sig){ const t=[...el.querySelectorAll('button,input,select,summary,textarea')].find(x=>sigOf(x)===sig); if(t) try{ t.focus({preventScroll:true}); }catch(e){} }
   $('#backq').hidden=!backTo;
@@ -913,6 +926,46 @@ function rcQBlock(qid,no,ctx){
   const back = t!==5 ? `<button class="linkbtn mob" data-a="topassage" data-q="${qid}" data-p="ps-${info.d}-${info.i}">지문 다시 보기</button>`:'';
   return `<div class="q" id="q-${qid}"><div class="qtitle"><span class="qno">${pad(no)}</span><div style="min-width:0">${title}</div></div>${fixNoteHTML(qid,rec,text)}<div class="opts">${opts}</div>${check}${expl}<div class="row qtools">${back}</div></div>`;
 }
+/* ---------- RC 파트별 타이머 ----------
+   목표 시간은 공식 기준이 아니라 연습용: 읽기 75분을 Part 5 약 10분(30문항)·Part 6 약 8분(16문항)·Part 7 약 55분(54문항)으로
+   나눈 예시를 하루 분량에 맞춘 값. Part 5 8문항 2:40, Part 6 4문항 2:00, Part 7 단일 3문항 3:00, 다중 5문항 5:00(합계 12:40). */
+const RT_TARGET={5:160,6:120,7:180,8:300}, RT_NAME={5:'Part 5',6:'Part 6',7:'Part 7 단일',8:'Part 7 다중'};
+const rcTimers={}; let rtTick=null;
+const rtSt=k=>rcTimers[k]||(rcTimers[k]={acc:0,t0:null});
+const rtEl=st=>st.acc+(st.t0?Date.now()-st.t0:0);
+const rtFmt=sec=>{ const v=Math.max(0,Math.round(Math.abs(sec))); return Math.floor(v/60)+':'+String(v%60).padStart(2,'0'); };
+const rtLeft=k=>RT_TARGET[+k.split('-')[1]]-rtEl(rtSt(k))/1000;
+const rtShow=k=>{ const l=rtLeft(k); return l>=0?rtFmt(l):'+'+rtFmt(-l); };
+function timerHTML(d,p){
+  const k=d+'-'+p, st=rtSt(k), run=!!st.t0, used=st.acc>0||run;
+  return `<div class="rtimer${run?' run':''}${rtLeft(k)<0?' over':''}" data-tk="${k}"><span class="rt-lab">⏱ 목표 ${rtFmt(RT_TARGET[p])}</span><span class="rt-time" role="timer">${rtShow(k)}</span><button class="btn rt-go" data-a="rtgo" data-k="${k}" aria-pressed="${run}">${run?'멈춤':used?'계속':'시작'}</button><button class="btn ghost" data-a="rtreset" data-k="${k}" ${used?'':'disabled'}>다시</button></div>`;
+}
+function rtPaint(){
+  document.querySelectorAll('.rtimer').forEach(el=>{ const k=el.dataset.tk, st=rtSt(k);
+    el.querySelector('.rt-time').textContent=rtShow(k); el.classList.toggle('over',rtLeft(k)<0); el.classList.toggle('run',!!st.t0); });
+  const runK=Object.keys(rcTimers).find(k=>rcTimers[k].t0);
+  let f=document.getElementById('rtfloat');
+  if(runK){ if(!f){ f=document.createElement('div'); f.id='rtfloat'; f.setAttribute('role','status'); document.body.appendChild(f); }
+    const [d,p]=runK.split('-'); f.classList.toggle('over',rtLeft(runK)<0);
+    f.innerHTML=`<span>Day ${d} · ${RT_NAME[p]}</span><b>${rtShow(runK)}</b><button type="button" data-a="rtgo" data-k="${runK}">멈춤</button>`;
+    if(!rtTick) rtTick=setInterval(rtPaint,250);
+  } else { if(f) f.remove(); if(rtTick){ clearInterval(rtTick); rtTick=null; } }
+}
+function rtToggle(k){
+  const st=rtSt(k);
+  if(st.t0){ st.acc+=Date.now()-st.t0; st.t0=null; }
+  else { for(const o in rcTimers){ const x=rcTimers[o]; if(x.t0){ x.acc+=Date.now()-x.t0; x.t0=null; } } st.t0=Date.now(); }  // 한 번에 하나만
+}
+function rtReset(k){ rcTimers[k]={acc:0,t0:null}; }
+// 한 파트의 문항을 모두 채점하면 그 파트 타이머를 자동으로 멈추고 결과를 알려 준다
+function rtAutoStop(qid){
+  if(!RC) return; const info=rcQ(qid), d=info.d, t=info.it.t, k=d+'-'+t, st=rcTimers[k];
+  if(!st||!st.t0) return;
+  const ids=[]; RC[d-1].forEach((it,i)=>{ if(it.t!==t) return; if(t===5) ids.push(`r${d}-${i}-0`); else it.qs.forEach((_,j)=>ids.push(`r${d}-${i}-${j}`)); });
+  if(!ids.every(q=>{ const j=judge(q,rcAns(q)); return j==='ok'||j==='ng'||j==='stale'; })) return;
+  st.acc+=Date.now()-st.t0; st.t0=null; const sec=st.acc/1000, tg=RT_TARGET[t];
+  toast(`${RT_NAME[t]} ${ids.length}문항 완료 · ${rtFmt(sec)} (${sec<=tg?'목표 '+rtFmt(tg)+' 이내':'목표보다 '+rtFmt(sec-tg)+' 초과'})`);
+}
 function vRC(){
   if(RC===null) return `<section class="sheet empty">RC 문제를 불러오는 중…</section>`;
   if(RC===false) return `<section class="sheet empty">RC 문제 파일을 불러오지 못했어요. 페이지를 새로고침해 주세요.</section>`;
@@ -937,10 +990,10 @@ function vRC(){
     return `<div class="rcset"><div class="passage" id="ps-${d}-${i}" tabindex="-1"><div class="muted" style="font-size:12.5px">${range} refer to the following ${esc(it.label.toLowerCase())}.</div>${it.docs.map(doc=>docHTML(doc,t===6?blanks:null)).join('')}</div>
       <div class="rcqs">${ids.map(qid=>rcQBlock(qid,noOf[qid],ctx)).join('')}</div></div>`; }).join('');
   const done=st.done>=20?`<section class="sheet grid" style="gap:8px"><h2>Day ${d} 채점 결과 ${st.c}/${st.n}</h2><p class="muted" style="margin:0">${st.n&&st.c/st.n>=0.85?'정답률 85% 이상이에요.':st.n&&st.c/st.n>=0.7?'틀린 문제의 근거 문장을 다시 찾아보세요.':'오답노트에서 근거 문장과 해설을 다시 확인해 보세요.'}</p><div class="row">${d<25?`<button class="btn" data-a="rcday" data-d="${d+1}">Day ${d+1} 미리 풀기</button>`:''}<button class="btn ghost" data-a="go" data-v="notes">오답노트</button></div></section>`:'';
-  return head+`<section class="sheet p5"><div class="part-head"><h2>Part 5</h2><span class="muted">단문 빈칸 채우기 · 문항당 20초 목표</span></div><div class="tip" style="margin:10px 0 16px"><b>Part 5</b> 해석보다 빈칸 앞뒤 구조(품사 자리, 수 일치, 시제 단서)를 먼저 보세요.</div>${p5}</section>`
-    +`<section class="sheet"><div class="part-head"><h2>Part 6</h2><span class="muted">장문 빈칸 채우기 · 문장 삽입 포함</span></div>${sets(6)}</section>`
-    +`<section class="sheet"><div class="part-head"><h2>Part 7</h2><span class="muted">단일 지문</span></div>${sets(7)}</section>`
-    +`<section class="sheet"><div class="part-head"><h2>Part 7</h2><span class="muted">다중 지문 · 두 문서를 연결하는 연계 문제에 주의</span></div><div class="tip" style="margin:10px 0 0"><b>연계 문제</b> 날짜·금액·조건이 다른 문서에 나눠져 있어요. 해설의 '연계' 표시를 확인하세요.</div>${sets(8)}</section>`+done+dayReportHTML('rc',qs);
+  return head+`<section class="sheet p5"><div class="part-head"><h2>Part 5</h2><span class="muted">단문 빈칸 채우기 · 문항당 20초 목표</span></div>${timerHTML(d,5)}<div class="tip" style="margin:10px 0 16px"><b>Part 5</b> 해석보다 빈칸 앞뒤 구조(품사 자리, 수 일치, 시제 단서)를 먼저 보세요.</div>${p5}</section>`
+    +`<section class="sheet"><div class="part-head"><h2>Part 6</h2><span class="muted">장문 빈칸 채우기 · 문장 삽입 포함</span></div>${timerHTML(d,6)}${sets(6)}</section>`
+    +`<section class="sheet"><div class="part-head"><h2>Part 7</h2><span class="muted">단일 지문</span></div>${timerHTML(d,7)}${sets(7)}</section>`
+    +`<section class="sheet"><div class="part-head"><h2>Part 7</h2><span class="muted">다중 지문 · 두 문서를 연결하는 연계 문제에 주의</span></div>${timerHTML(d,8)}<div class="tip" style="margin:10px 0 0"><b>연계 문제</b> 날짜·금액·조건이 다른 문서에 나눠져 있어요. 해설의 '연계' 표시를 확인하세요.</div>${sets(8)}</section>`+done+dayReportHTML('rc',qs);
 }
 function commitRC(qid,c,unsure){
   const prev=rcAns(qid);
@@ -1173,7 +1226,9 @@ document.addEventListener('click',e=>{
     case 'lcpk': case 'rcpk': setPick(q,+el.dataset.o); break;
     case 'ans': case 'ansrc': setPick(q,+el.dataset.o); break;
     case 'lccheck': { const p=S.pk[q]; if(p&&commitLC(q,p.c,p.u)){ save(); keepScroll(render); } break; }
-    case 'rccheck': { const p=S.pk[q]; if(p&&commitRC(q,p.c,p.u)){ save(); keepScroll(render); } break; }
+    case 'rccheck': { const p=S.pk[q]; if(p&&commitRC(q,p.c,p.u)){ rtAutoStop(q); save(); keepScroll(render); } break; }
+    case 'rtgo': rtToggle(el.dataset.k); if(view==='rc') keepScroll(render); else rtPaint(); break;
+    case 'rtreset': rtReset(el.dataset.k); keepScroll(render); break;
     case 'jump': { const t=document.getElementById('q-'+q); if(t){ t.scrollIntoView({behavior:'smooth',block:'center'}); t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); const b=t.querySelector('.opt:not(:disabled)'); if(b) try{ b.focus({preventScroll:true}); }catch(_){} } break; }
     case 'topassage': { backTo=q; const p=document.getElementById(el.dataset.p); if(p){ p.scrollIntoView({behavior:'smooth',block:'start'}); try{ p.focus({preventScroll:true}); }catch(_){} } $('#backq').hidden=false; break; }
     case 'backq': { const t=document.getElementById('q-'+backTo); backTo=null; $('#backq').hidden=true; if(t){ t.scrollIntoView({behavior:'smooth',block:'center'}); const b=t.querySelector('button'); if(b) try{ b.focus({preventScroll:true}); }catch(_){} } break; }
