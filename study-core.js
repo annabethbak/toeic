@@ -74,17 +74,57 @@
   function accentGroups(voices) {
     return ACCENTS.map(a => ({ k: a.k, name: a.name, v: (voices || []).filter(x => a.re.test(x.lang || '')) })).filter(g => g.v.length);
   }
+  // 음성 성별: 브라우저가 성별을 알려 주지 않으므로 음성 이름으로만 추정한다(모르면 null).
+  // Android 구글 음성(en-us-x-iol 등), Windows(David·Zira 등), Apple(Daniel·Samantha 등), 이름에 Male/Female이 든 음성.
+  const MALE_RE = /\bmale\b|\bman\b|david|mark|guy|ryan|james|george|daniel|\balex\b|fred|aaron|arthur|gordon|rishi|thomas|oliver|eric|christopher|brian|liam|william|matthew|joey|justin|russell|nathan|evan|ravi|prabhat|-x-(iol|iom|tpd|gbb|gbd|rjs|aub|aud|end|cxx)[-_]/i;
+  const FEMALE_RE = /female|woman|zira|susan|hazel|samantha|victoria|karen|moira|tessa|fiona|serena|allison|\bava\b|kate|libby|sonia|natasha|aria|jenny|michelle|catherine|heera|veena|nicky|-x-(sfg|iob|iog|tpc|tpf|gba|gbc|gbg|aua|auc|ahp)[-_]/i;
+  function voiceGender(v) {
+    const n = ((v && v.name) || '') + ' ' + ((v && v.voiceURI) || '');
+    if (FEMALE_RE.test(n)) return 'F';   // 'female'에 'male'이 들어 있으므로 여성부터 본다
+    if (MALE_RE.test(n)) return 'M';
+    return null;
+  }
   // speakers: 등장 순서대로의 화자 목록, seed: 문항마다 고정된 순서 번호(같은 문항은 늘 같은 배정)
-  // 같은 세트 안에서는 화자마다 다른 억양을 먼저 쓰고, 억양 수보다 화자가 많으면 같은 억양의 다른 음성을 쓴다.
-  function assignVoices(speakers, voices, seed) {
-    const out = {}, g = accentGroups(voices); seed = Math.abs(seed | 0);
-    if (!g.length) { speakers.forEach((sp, k) => { out[sp] = voices && voices.length ? { voice: voices[k % voices.length], accent: null } : null; }); return out; }
-    const start = seed % g.length;
+  // genderOf(sp): 'M' | 'F' | null. 성별을 억양보다 먼저 맞춘다.
+  // 같은 세트 안에서는 화자마다 다른 억양을 먼저 쓰고, 맞는 성별 음성이 그 억양에 없으면 다른 억양의 같은 성별 음성을 쓴다.
+  // 기기에 남성 음성이 없으면 남자 화자는 낮은 목소리(pitch)로 대신 읽는다(fallback: true).
+  function assignVoices(speakers, voices, seed, genderOf) {
+    const out = {}, all = voices || [], g = accentGroups(all); seed = Math.abs(seed | 0);
+    const used = new Set(), gOf = genderOf || (() => null);
+    const pick = (list, want) => {
+      const ok = v => want === 'F' ? voiceGender(v) !== 'M' : voiceGender(v) === want;
+      const fresh = list.filter(v => ok(v) && !used.has(v));
+      return fresh[seed % (fresh.length || 1)] || list.filter(ok)[0] || null;
+    };
     speakers.forEach((sp, k) => {
-      const grp = g[(start + k) % g.length], round = Math.floor(k / g.length);
-      out[sp] = { voice: grp.v[(seed + round) % grp.v.length], accent: grp.k };
+      const want = gOf(sp);
+      const grp = g.length ? g[(seed + k) % g.length] : null;
+      let v = null, accent = grp ? grp.k : null, fallback = false;
+      if (want) {
+        v = grp ? pick(grp.v, want) : null;
+        if (!v) { v = pick(all, want); if (v) { const a = g.find(x => x.v.includes(v)); accent = a ? a.k : null; } }
+        if (!v && want === 'M') { v = pick(all, 'F') || all[0] || null; fallback = true; }   // 남성 음성 없음
+      }
+      if (!v) { const list = grp ? grp.v : all; v = list.filter(x => !used.has(x))[0] || list[(seed + k) % (list.length || 1)] || null; }
+      if (v) used.add(v);
+      out[sp] = v ? { voice: v, accent, fallback } : null;
+    });
+    // 같은 음성을 두 화자가 쓰면 높낮이로 구분. 남성 음성이 없어 대신 읽는 남자 화자는 낮게.
+    const seen = new Map();
+    speakers.forEach(sp => {
+      const a = out[sp]; if (!a) return;
+      const n = seen.get(a.voice) || 0; seen.set(a.voice, n + 1);
+      a.pitch = a.fallback ? [0.62, 0.74][n % 2] : [1, 1.12, 0.9, 1.05][n % 4];
     });
     return out;
+  }
+  // Part 4 담화의 화자 성별: 스크립트에서 이름을 밝힌 담화는 그 이름에 맞추고, 나머지는 번갈아 배정한다.
+  const P4_NARRATOR = { 1: 'F', 4: 'M', 7: 'M', 10: 'F', 12: 'F', 18: 'F', 23: 'M' };
+  function lcGender(key, sp) {
+    if (sp === 'M' || sp === 'M2') return 'M';
+    if (sp === 'W' || sp === 'W2') return 'F';
+    if (sp === 'N') { const m = /^p4-(\d+)/.exec(String(key)); if (m) { const i = +m[1]; return P4_NARRATOR[i] || (i % 2 ? 'M' : 'F'); } }
+    return null;
   }
 
   // 문항(음성) 순서 번호: 하루 LC는 Part 2 6문항 → Part 3 2세트 → Part 4 1세트 = 음성 9개.
@@ -238,7 +278,7 @@
   function decodeBackup(text, ctx) { try { return validateState(parseBackupText(text), ctx); } catch (e) { return null; } }
 
   const api = { SCHEMA, WORD_INT, LONG, isObj, clone, meta, curV, isStale, grade, wasAccepted, lcAnswerMap,
-    wordDecide, wordStage, ACCENTS, accentGroups, assignVoices, lcVoiceSeed, blank, migrate, activity, mergeState, decodeBackup, validateState };
+    wordDecide, wordStage, ACCENTS, accentGroups, assignVoices, lcVoiceSeed, voiceGender, lcGender, blank, migrate, activity, mergeState, decodeBackup, validateState };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Core = api;
 })(typeof window !== 'undefined' ? window : globalThis);
