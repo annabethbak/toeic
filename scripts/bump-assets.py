@@ -6,7 +6,7 @@ import hashlib, pathlib, re
 root = pathlib.Path(__file__).resolve().parent.parent
 h = lambda p: hashlib.sha1(p.read_bytes()).hexdigest()[:8]
 ver = {'assets/'+f: h(root/'assets'/f) for f in ('site.css', 'ads.js')}
-for f in ('data-words.js', 'data-lc.js', 'data-meta.js', 'study-core.js', 'rc.json'):
+for f in ('data-words.js', 'data-lc.js', 'data-meta.js', 'data-audio.js', 'study-core.js', 'rc.json'):
     if (root/f).exists(): ver[f] = h(root/f)
 n = 0
 for page in [*root.glob('*.html'), *root.glob('guide/*.html')]:

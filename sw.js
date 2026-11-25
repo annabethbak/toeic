@@ -4,11 +4,11 @@
      (페이지가 ?v=해시로 파일을 부르므로, 파일이 바뀌면 새 주소로 다시 받는다.)
    - 광고(AdSense)와 그 밖의 외부 요청은 건드리지 않는다. Google Fonts만 저장해 둔다.
    파일 목록이나 동작을 바꾸면 VERSION을 올린다. */
-const VERSION = 'e800-v3';
+const VERSION = 'e800-v4';
 const CORE = [
   '/', '/index.html', '/offline.html',
   '/assets/site.css', '/assets/ads.js',
-  '/study-core.js', '/data-meta.js', '/data-words.js', '/data-lc.js', '/rc.json',
+  '/study-core.js', '/data-meta.js', '/data-words.js', '/data-lc.js', '/data-audio.js', '/rc.json',
   '/favicon.svg', '/favicon.ico', '/icon-192.png', '/site.webmanifest',
   '/guide/index.html', '/about.html', '/privacy.html', '/contact.html'
 ];
