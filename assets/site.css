@@ -153,3 +153,8 @@ body.page .gtabs button{white-space:nowrap}
 .ad-slot.live{min-height:280px;padding-top:4px}
 .ad-slot.live::before,.ad-slot.preview::before{content:"광고";display:block;font-family:var(--f-body);font-size:11px;letter-spacing:.04em;color:var(--muted);margin-bottom:4px;text-align:left}
 .ad-slot.live:has(> ins[data-ad-status="unfilled"]){display:none}
+
+/* 학습하기·모의고사: 문제를 푸는 메뉴는 초록색으로 구분 */
+.site-nav a.l.go{opacity:1;color:#7fe0b4;box-shadow:inset 0 0 0 1px rgba(127,224,180,.45)}
+.site-nav a.l.go:hover{background:rgba(127,224,180,.14)}
+.site-nav a.l.go[aria-current="page"]{background:#1f9d6b;color:#fff;box-shadow:none}
