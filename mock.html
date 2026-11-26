@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>실전 모의고사 1회: 하프 100문항 무료 (TOEIC® 시험 대비) | English800</title>
+<meta name="description" content="TOEIC 시험 대비 무료 하프 모의고사. LC 50문항(Part 1~4, 미국·영국·호주 음성)과 RC 50문항(Part 5~7)을 60분 동안 풀고 파트별 정답 수와 해설, 함정 포인트를 확인합니다.">
+<link rel="canonical" href="https://english800.kr/mock.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="English800 — 25일 무료 영어 듣기·독해 학습">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="실전 모의고사 1회: 하프 100문항 무료 (TOEIC® 시험 대비) | English800">
+<meta property="og:description" content="LC 50문항과 RC 50문항을 60분 동안 풀고 파트별 정답 수와 해설, 함정 포인트를 확인하는 무료 하프 모의고사입니다.">
+<meta property="og:image" content="https://english800.kr/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:url" content="https://english800.kr/mock.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css?v=d8724cff">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8541021859032223" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "English800", "item": "https://english800.kr/"}, {"@type": "ListItem", "position": 2, "name": "실전 모의고사", "item": "https://english800.kr/mock.html"}]}, {"@type": "WebPage", "name": "실전 모의고사 1회: 하프 100문항", "url": "https://english800.kr/mock.html", "inLanguage": "ko", "isPartOf": {"@id": "https://english800.kr/#website"}}]}</script>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#1b2240">
+<meta name="naver-site-verification" content="29dcbc2ea68c166db695b1c604a91ce3d51500ad" />
+<style>
+/* 모의고사: 앱과 같은 OMR 답안지 모양. 위쪽에 남은 시간·답한 문항 막대가 붙어 있고, 파트별 시트가 한 줄로 이어진다. */
+*{box-sizing:border-box}
+html,body{background:var(--paper);color:var(--ink)}
+body{margin:0;font-family:var(--f-body);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--omr);outline-offset:2px}
+.mk{max-width:880px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px));display:grid;gap:18px}
+.mk h1,.mk h2,.mk h3{font-family:var(--f-disp);margin:0;letter-spacing:-.01em;text-wrap:balance;word-break:keep-all}
+.mk h1{font-size:clamp(23px,6vw,28px);line-height:1.25}
+.mk h2{font-size:19px}
+.mk p,.mk li{word-break:keep-all;overflow-wrap:anywhere}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--omr);font-weight:600}
+.muted{color:var(--muted)}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
+.btn{border:1px solid var(--line);background:var(--sheet);padding:9px 16px;border-radius:10px;font-weight:600;font-size:14px;min-height:40px}
+.btn.pri{background:var(--omr);border-color:var(--omr);color:#fff}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tip{font-size:13.5px;border-left:3px solid var(--omr);padding:4px 0 4px 12px;color:var(--muted);margin:0}
+.tip b{color:var(--ink)}
+.notice{font-size:13px;color:var(--muted);background:var(--chip);border-radius:10px;padding:10px 12px;margin:0}
+table.plan{width:100%;border-collapse:collapse;font-size:13.5px}
+table.plan th,table.plan td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:top}
+table.plan th{font-weight:600;color:var(--muted);font-size:12.5px}
+table.plan td.n{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px}
+.toggle input{width:18px;height:18px;accent-color:var(--omr)}
+/* 위쪽 막대 */
+.bar{position:sticky;top:0;z-index:6;background:var(--sheet);border-bottom:1px solid var(--line)}
+.bar .in{max-width:880px;margin:0 auto;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap}
+.bar .time{font-family:var(--f-mono);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.bar .time.over{color:var(--dunno)}
+.bar .cnt{font-size:13px;color:var(--muted);margin-right:auto}
+.bar .btn{padding:6px 12px;min-height:36px;font-size:13px}
+.jump{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;width:100%}
+.jump a{flex:none;font-size:12.5px;font-weight:600;color:var(--muted);text-decoration:none;padding:3px 10px;border-radius:99px;border:1px solid var(--line)}
+/* 문항 */
+.part-head{display:grid;gap:4px;margin-bottom:6px;scroll-margin-top:112px}
+.part-head .d{font-size:13px;color:var(--muted);margin:0}
+.q{border-top:1px dashed var(--line);padding-top:16px;margin-top:16px;display:grid;gap:10px;scroll-margin-top:120px}
+.qt{display:flex;gap:10px;align-items:flex-start}
+.qno{flex:none;font-family:var(--f-mono);font-weight:600;color:var(--omr);min-width:28px}
+.stem{min-width:0;display:grid;gap:8px}
+.stem .en{font-weight:600;white-space:pre-line}
+.play{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--omr);color:var(--omr);background:var(--omr-soft);border-radius:99px;padding:6px 14px;font-weight:600;font-size:13px;min-height:36px}
+.play.on{background:var(--omr);color:#fff}
+.play:disabled{opacity:.55;cursor:default}
+.opts{display:grid;gap:6px}
+.opt{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid transparent;background:transparent;padding:6px 8px;border-radius:10px;width:100%;min-height:44px}
+.opt:hover:not(:disabled){background:var(--chip)}
+.opt:disabled{cursor:default}
+.opt .t{flex:1;min-width:0}
+.opt .st{margin-left:auto;font-size:12px;font-weight:700;white-space:nowrap}
+.bub{flex:none;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--omr);color:var(--omr);display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;font-weight:600}
+.opt.pick{background:var(--chip);border-color:var(--ink)}
+.opt.pick .bub{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+.opt.right{background:var(--know-soft);border-color:var(--know)}
+.opt.right .bub{background:var(--know);border-color:var(--know);color:#fff}
+.opt.right .st{color:var(--know)}
+.opt.wrong{background:var(--dunno-soft);border-color:var(--dunno)}
+.opt.wrong .bub{background:var(--dunno);border-color:var(--dunno);color:#fff}
+.opt.wrong .st{color:var(--dunno)}
+.opt .hide{color:var(--muted);letter-spacing:.2em}
+.expl{font-size:13.5px;background:var(--chip);border-radius:10px;padding:10px 12px;display:grid;gap:6px}
+.expl .trap b{color:var(--warn)}
+.set{border-top:1px dashed var(--line);padding-top:18px;margin-top:18px;display:grid;gap:14px}
+.set:first-of-type{border-top:0;padding-top:0;margin-top:6px}
+.set .q:first-of-type{border-top:0;padding-top:0;margin-top:0}
+details.script{font-size:13.5px}
+details.script summary{cursor:pointer;color:var(--muted);font-weight:600}
+.script p{margin:6px 0}
+.script .sp{font-family:var(--f-mono);font-size:11px;color:var(--omr);font-weight:600;margin-right:6px}
+.graphic{border:1.5px solid var(--ink);border-radius:8px;padding:10px 14px;max-width:440px;background:var(--paper)}
+.graphic b{display:block;font-size:13.5px;border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:4px}
+.graphic table{border-collapse:collapse;font-family:var(--f-mono);font-size:12.5px;width:100%}
+.graphic td{padding:3px 8px 3px 0;vertical-align:top}
+.pic{margin:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);max-width:420px;background:#eef1f5}
+.pic svg{display:block;width:100%;height:auto}
+.doc{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-size:14.5px;line-height:1.65;min-width:0;overflow-wrap:anywhere}
+.doc p{margin:0 0 10px}.doc p:last-child{margin:0}
+.doc-h{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--omr);font-weight:600;margin-bottom:8px}
+.blank{display:inline-block;min-width:3.2em;border-bottom:2px solid var(--omr);padding:0 4px;font-family:var(--f-mono);font-size:12.5px;font-weight:600;color:var(--omr);text-align:center}
+.passage{display:grid;gap:12px;min-width:0}
+.rcqs{display:grid;gap:0;min-width:0}
+@media (min-width:960px){
+  .mk.wide{max-width:1180px}
+  .rc7{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px;align-items:start}
+  .rc7 .passage{position:sticky;top:110px;max-height:calc(100vh - 130px);overflow:auto;padding-right:4px}
+  .rc7 .rcqs .q:first-child{border-top:0;padding-top:0;margin-top:0}
+}
+/* 결과 */
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kpi{padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+.kpi .v{font-family:var(--f-disp);font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi .v small{font-size:14px;color:var(--muted);font-weight:500}
+.kpi .l{font-size:12px;color:var(--muted);margin-top:4px}
+.parts{display:grid;gap:8px}
+.prow{display:grid;grid-template-columns:7.5em minmax(0,1fr) 4.2em;gap:10px;align-items:center;font-size:13px}
+.prow .tr{height:8px;background:var(--chip);border-radius:99px;overflow:hidden}
+.prow .tr i{display:block;height:100%;background:var(--know);border-radius:99px}
+.prow .n{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+/* 답안지 */
+.omr{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px 10px;font-family:var(--f-mono);font-size:12px}
+.omr a{display:flex;align-items:center;gap:6px;color:var(--ink);text-decoration:none;padding:3px 4px;border-radius:6px}
+.omr a:hover{background:var(--chip)}
+.omr a span{color:var(--muted);width:2.2em;text-align:right}
+.omr a i{font-style:normal;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--omr);display:grid;place-items:center;font-size:11px;color:var(--omr);font-weight:600}
+.omr a i.p{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+.omr a i.k{background:var(--know);border-color:var(--know);color:#fff}
+.omr a i.d{background:var(--dunno);border-color:var(--dunno);color:#fff}
+.filter{display:inline-flex;gap:4px;border:1px solid var(--line);border-radius:99px;padding:3px}
+.filter button{border:0;background:transparent;border-radius:99px;padding:4px 12px;font-size:13px;font-weight:600;color:var(--muted)}
+.filter button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.q.flash{animation:flash 1.2s ease}
+@keyframes flash{0%{background:var(--omr-soft)}100%{background:transparent}}
+.confirm{display:grid;gap:10px;border:1.5px solid var(--omr);border-radius:12px;padding:14px;background:var(--omr-soft)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:10px 16px;border-radius:10px;font-size:14px;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.show{opacity:1}
+[hidden]{display:none!important}
+@media (max-width:520px){.kpis{grid-template-columns:1fr 1fr}.kpis .kpi:first-child{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="사이트 메뉴"><div class="in"><a class="logo" href="index.html" aria-label="English800 — 25일 무료 영어 듣기·독해 학습">English800<small>25일 무료 영어 듣기·독해 학습</small></a><ul><li><a class="l" href="index.html">학습하기</a></li><li><a class="l" href="mock.html" aria-current="page">모의고사</a></li><li><a class="l" href="guide/index.html">학습 가이드</a></li><li><a class="l" href="about.html">소개</a></li><li><a class="l" href="contact.html">문의</a></li></ul></div></nav>
+<div class="bar" id="bar" hidden><div class="in">
+  <span class="time" id="time" aria-live="off">60:00</span>
+  <span class="cnt" id="cnt">답한 문항 0/100</span>
+  <a class="btn ghost" href="#omr" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center">답안지</a>
+  <button class="btn pri" data-a="submit" id="subbtn">제출하기</button>
+  <nav class="jump" aria-label="파트 바로 가기"><a href="#part1">Part 1</a><a href="#part2">Part 2</a><a href="#part3">Part 3</a><a href="#part4">Part 4</a><a href="#part5">Part 5</a><a href="#part6">Part 6</a><a href="#part7">Part 7</a></nav>
+</div></div>
+<main class="mk" id="mk">
+  <section class="sheet" id="intro" style="display:grid;gap:14px">
+    <div class="eyebrow">실전 모의고사 · 하프</div>
+    <h1>English800 실전 모의고사 1회</h1>
+    <p style="margin:0">TOEIC® 시험과 같은 순서로 LC 50문항, RC 50문항을 60분 동안 풉니다. 25일 과정 문제보다 한 단계 어렵게 만들었고, 듣기는 미국·영국·호주 억양 음성으로 나옵니다.</p>
+    <table class="plan">
+      <thead><tr><th>구분</th><th>내용</th><th style="text-align:right">문항</th></tr></thead>
+      <tbody>
+        <tr><td>Part 1</td><td>그림 묘사 (사진 대신 직접 그린 그림)</td><td class="n">3</td></tr>
+        <tr><td>Part 2</td><td>질의응답</td><td class="n">14</td></tr>
+        <tr><td>Part 3</td><td>짧은 대화 (3인 대화·시각 자료 포함)</td><td class="n">18</td></tr>
+        <tr><td>Part 4</td><td>짧은 담화 (시각 자료 포함)</td><td class="n">15</td></tr>
+        <tr><td>Part 5</td><td>단문 빈칸</td><td class="n">15</td></tr>
+        <tr><td>Part 6</td><td>장문 빈칸 (문장 넣기 포함)</td><td class="n">8</td></tr>
+        <tr><td>Part 7</td><td>독해 (단일·이중·삼중 지문)</td><td class="n">27</td></tr>
+      </tbody>
+    </table>
+    <ul class="tip" style="list-style:none;display:grid;gap:4px">
+      <li><b>시간</b> 권장 60분(LC 약 25분 + RC 35분). 시작하면 남은 시간이 위쪽에 나오고, 넘기면 초과 시간이 빨갛게 표시돼요.</li>
+      <li><b>채점</b> 마지막에 제출하면 한꺼번에 채점하고, 문항마다 해설과 함정 포인트를 보여 줘요.</li>
+      <li><b>기록</b> 답은 이 브라우저에 저장돼서, 창을 닫았다 다시 열어도 이어서 풀 수 있어요.</li>
+    </ul>
+    <label class="toggle"><input type="checkbox" id="once" checked> LC 음성은 실전처럼 한 번만 재생</label>
+    <div class="row" id="introBtns"></div>
+    <p class="notice">모든 문항, 지문, 그림, 음성은 English800이 직접 만든 연습 문제이며 ETS 공식 문제나 기출문제가 아닙니다. 정답 수만 알려 드리고, 실제 시험 점수로 바꾼 예상 점수는 제공하지 않아요.</p>
+  </section>
+  <section class="sheet" id="result" hidden style="display:grid;gap:14px"></section>
+  <div id="exam" hidden></div>
+  <section class="sheet" id="omr" hidden style="scroll-margin-top:110px"></section>
+  <div class="ad-slot bottom ad-gap-bottom" data-slot="bottom" aria-label="광고"><b>AD</b><span>하단 광고</span></div>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<footer class="site-foot"><div class="in"><nav aria-label="사이트 정보"><a href="privacy.html">개인정보처리방침</a><a href="contact.html">문의</a><a href="guide/index.html">학습 가이드</a></nav><p class="tm" lang="en">TOEIC® is a registered trademark of ETS. This product is not endorsed or approved by ETS.</p><p>English800은 ETS 및 YBM과 관련이 없는 비공식 독립 학습 사이트이며, ETS의 승인이나 후원을 받지 않았습니다. 모든 문항은 자체 제작한 연습 문제이며, ETS 공식 교재·기출문제·음원·로고를 사용하지 않습니다.</p><p>© 2026 쑤우라이프</p></div></footer>
+<script src="data-mock.js?v=487569df"></script>
+<script src="data-mock-audio.js?v=21e8be07"></script>
+<script>
+/* Part 1 그림: 사진 대신 단순한 장면 그림(사람·사물 위치만 알아볼 수 있게). 색은 사진처럼 고정한다. */
+const ART = {
+bikes: `<svg viewBox="0 0 320 200" role="img"><rect width="320" height="132" fill="#dbe8f4"/><rect y="128" width="320" height="72" fill="#b8bcc6"/><rect y="128" width="320" height="6" fill="#9ea3ae"/>
+<rect x="0" y="22" width="170" height="108" fill="#c9b49c"/><rect x="0" y="22" width="170" height="8" fill="#a8927a"/>
+<rect x="16" y="44" width="34" height="28" fill="#8fb3d0" stroke="#6e5c49" stroke-width="2"/><rect x="66" y="44" width="34" height="28" fill="#8fb3d0" stroke="#6e5c49" stroke-width="2"/><rect x="116" y="44" width="34" height="28" fill="#8fb3d0" stroke="#6e5c49" stroke-width="2"/>
+<rect x="120" y="86" width="30" height="44" fill="#6e5c49"/><circle cx="144" cy="110" r="2" fill="#e8d9b0"/>
+<g stroke="#4a4f5a" stroke-width="3" fill="none"><path d="M24 172 V146 H184 V172"/><path d="M70 172 V150"/><path d="M118 172 V150"/><path d="M164 172 V150"/></g>
+<g fill="none" stroke-width="3"><g stroke="#c0392b"><circle cx="34" cy="164" r="14"/><circle cx="72" cy="164" r="14"/><path d="M34 164 L50 142 L72 164 M50 142 L64 142 L72 164 M50 142 L46 134 M64 142 L68 133"/></g>
+<g stroke="#1f6f8b"><circle cx="86" cy="166" r="14"/><circle cx="124" cy="166" r="14"/><path d="M86 166 L102 144 L124 166 M102 144 L116 144 L124 166 M102 144 L98 136 M116 144 L120 135"/></g>
+<g stroke="#2e7d4f"><circle cx="136" cy="166" r="14"/><circle cx="174" cy="166" r="14"/><path d="M136 166 L152 144 L174 166 M152 144 L166 144 L174 166 M152 144 L148 136 M166 144 L170 135"/></g></g>
+<rect x="210" y="146" width="76" height="7" rx="2" fill="#8a6a45"/><rect x="210" y="132" width="76" height="6" rx="2" fill="#8a6a45"/><rect x="216" y="153" width="5" height="20" fill="#5e4a33"/><rect x="275" y="153" width="5" height="20" fill="#5e4a33"/>
+<rect x="294" y="80" width="8" height="70" fill="#7a5a3a"/><circle cx="298" cy="66" r="22" fill="#5f9e5a"/><circle cx="284" cy="78" r="15" fill="#6fae66"/><circle cx="310" cy="80" r="14" fill="#579052"/></svg>`,
+desk: `<svg viewBox="0 0 320 200" role="img"><rect width="320" height="200" fill="#ece6dc"/><rect y="176" width="320" height="24" fill="#c7b9a5"/>
+<rect x="176" y="16" width="124" height="92" fill="#cfe3f2" stroke="#8a8f99" stroke-width="4"/><path d="M238 16 V108" stroke="#8a8f99" stroke-width="3"/>
+<g fill="#f4f4f2" stroke="#d2d2cc" stroke-width="1"><rect x="178" y="18" width="120" height="8"/><rect x="178" y="26" width="120" height="8"/><rect x="178" y="34" width="120" height="8"/><rect x="178" y="42" width="120" height="8"/><rect x="178" y="50" width="120" height="8"/></g>
+<path d="M178 58 H298" stroke="#b9b9b0" stroke-width="3"/><path d="M290 58 V86" stroke="#9a9a92" stroke-width="1.5"/>
+<rect x="170" y="108" width="136" height="7" fill="#d8d2c6"/>
+<path d="M200 90 H222 L218 108 H204 Z" fill="#b5603b"/><ellipse cx="204" cy="80" rx="8" ry="13" fill="#4f8f4a" transform="rotate(-25 204 80)"/><ellipse cx="218" cy="79" rx="8" ry="13" fill="#5ea457" transform="rotate(25 218 79)"/><ellipse cx="211" cy="74" rx="6" ry="13" fill="#3f7d3b"/>
+<rect x="12" y="128" width="262" height="10" fill="#a57c52"/><rect x="22" y="138" width="8" height="40" fill="#7d5c3a"/><rect x="256" y="138" width="8" height="40" fill="#7d5c3a"/>
+<path d="M58 128 L64 120 H136 L142 128 Z" fill="#9aa0aa"/><rect x="66" y="76" width="68" height="46" rx="3" fill="#2d3340"/><rect x="71" y="81" width="58" height="36" fill="#7fa9d6"/><path d="M76 105 L92 94 L104 101 L124 88" stroke="#e8f0fa" stroke-width="2.5" fill="none"/>
+<rect x="168" y="120" width="54" height="8" fill="#d9a441"/><rect x="171" y="113" width="50" height="7" fill="#5b7fb5"/><rect x="167" y="106" width="52" height="7" fill="#c75d5d"/>
+<rect x="232" y="114" width="16" height="14" rx="2" fill="#f2f2f2" stroke="#9a9a9a"/><path d="M248 118 q6 2 0 7" stroke="#9a9a9a" fill="none" stroke-width="2"/></svg>`,
+shelf: `<svg viewBox="0 0 320 200" role="img"><rect width="320" height="200" fill="#efece6"/><rect y="182" width="320" height="18" fill="#cfc6b8"/>
+<rect x="160" y="14" width="148" height="170" fill="#d9d4cb" stroke="#8d8577" stroke-width="3"/>
+<g fill="#8d8577"><rect x="160" y="52" width="148" height="5"/><rect x="160" y="96" width="148" height="5"/><rect x="160" y="140" width="148" height="5"/></g>
+<g><rect x="168" y="24" width="30" height="28" fill="#d18b47"/><rect x="204" y="30" width="26" height="22" fill="#5b8fb9"/><rect x="236" y="22" width="32" height="30" fill="#d18b47"/><rect x="274" y="32" width="26" height="20" fill="#7aa36b"/>
+<rect x="168" y="70" width="34" height="26" fill="#5b8fb9"/><rect x="208" y="64" width="28" height="32" fill="#c96a6a"/><rect x="242" y="72" width="30" height="24" fill="#d18b47"/><rect x="278" y="68" width="22" height="28" fill="#5b8fb9"/>
+<rect x="168" y="114" width="28" height="26" fill="#7aa36b"/><rect x="202" y="110" width="34" height="30" fill="#d18b47"/><rect x="242" y="116" width="26" height="24" fill="#c96a6a"/><rect x="274" y="112" width="26" height="28" fill="#5b8fb9"/>
+<rect x="168" y="156" width="40" height="28" fill="#d18b47"/><rect x="214" y="160" width="30" height="24" fill="#5b8fb9"/><rect x="250" y="154" width="50" height="30" fill="#c96a6a"/></g>
+<g><path d="M112 118 L106 182 H116 L120 132 L124 182 H134 L130 118 Z" fill="#3c4a63"/><path d="M106 84 Q121 76 136 84 L134 122 H108 Z" fill="#2f8f83"/>
+<path d="M131 88 L150 60 L166 34" stroke="#2f8f83" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="167" cy="32" r="5" fill="#e2b18f"/>
+<path d="M110 90 L104 116" stroke="#2f8f83" stroke-width="8" stroke-linecap="round"/><circle cx="104" cy="119" r="4.5" fill="#e2b18f"/>
+<rect x="116" y="70" width="10" height="10" fill="#e2b18f"/><circle cx="121" cy="60" r="12" fill="#e2b18f"/><path d="M108 60 Q109 44 122 45 Q136 46 134 62 Q131 52 121 52 Q112 52 110 64 Z" fill="#3b2a20"/><path d="M110 60 Q106 76 112 82" stroke="#3b2a20" stroke-width="5" fill="none" stroke-linecap="round"/></g>
+<g stroke="#5c6470" stroke-width="3" fill="none"><path d="M12 112 H24 L32 150 H82 L90 120 H28"/><path d="M34 158 H80"/><path d="M32 150 L34 158"/><path d="M82 150 L80 158"/></g>
+<g fill="none" stroke="#5c6470" stroke-width="1.5"><path d="M34 128 H86 M36 138 H84 M45 120 L48 150 M60 120 L60 150 M75 120 L72 150"/></g>
+<circle cx="40" cy="172" r="7" fill="#3d434d"/><circle cx="74" cy="172" r="7" fill="#3d434d"/><path d="M40 158 V165 M74 158 V165" stroke="#5c6470" stroke-width="3"/></svg>`
+};
+
+const KEY = 'e800-mock1-v1', LIMIT = MOCK.min * 60;
+const ITEMS = mockItems(), BY = Object.fromEntries(ITEMS.map(it => [it.id, it])), L = 'ABCD';
+const PARTS = [[1, 'Part 1', '그림 묘사'], [2, 'Part 2', '질의응답'], [3, 'Part 3', '짧은 대화'], [4, 'Part 4', '짧은 담화'], [5, 'Part 5', '단문 빈칸'], [6, 'Part 6', '장문 빈칸'], [7, 'Part 7', '독해']];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const $ = s => document.querySelector(s);
+let S = load(), filter = 'all', confirmSubmit = false, confirmReset = false;
+function blank(){ return {start: null, picks: {}, played: {}, done: null, once: true}; }
+function load(){ try { const v = JSON.parse(localStorage.getItem(KEY)); if (v && v.picks) return Object.assign(blank(), v); } catch (e) {} return blank(); }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+function toast(m){ const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 2600); }
+const elapsed = () => S.start ? Math.floor(((S.done || Date.now()) - S.start) / 1000) : 0;
+const mmss = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+const answered = () => ITEMS.filter(it => S.picks[it.id] !== undefined).length;
+
+/* ---------- 음성 ---------- */
+let audio = null, playing = null;
+function stopAudio(){ if (audio) { audio.onended = audio.onerror = null; audio.pause(); audio = null; } playing = null; paintPlay(); }
+function playSet(pid){
+  if (playing === pid) { stopAudio(); return; }
+  stopAudio();
+  const files = (typeof MOCK_AUDIO !== 'undefined' && MOCK_AUDIO[pid]) || null;
+  if (!files) { toast('음성 파일을 찾지 못했어요. 스크립트를 보며 풀어 주세요.'); return; }
+  if (!S.done && S.once && S.played[pid]) { toast('실전 모드에서는 한 번만 들을 수 있어요.'); return; }
+  playing = pid; if (!S.done) { S.played[pid] = 1; save(); } paintPlay();
+  let i = 0;
+  const next = () => {
+    if (playing !== pid) return;
+    if (i >= files.length) { playing = null; audio = null; paintPlay(); return; }
+    audio = new Audio('audio/mock/' + files[i++] + '.mp3');
+    audio.onended = () => setTimeout(next, pid.startsWith('p2') || pid.startsWith('p1') ? 700 : 350);
+    audio.onerror = () => { if (!S.done) { delete S.played[pid]; save(); } stopAudio(); toast('음성을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'); };
+    audio.play().catch(() => audio.onerror && audio.onerror());
+  };
+  next();
+}
+function playLabel(pid){
+  if (playing === pid) return '■ 정지';
+  if (!S.done && S.once && S.played[pid]) return '재생함';
+  return pid.startsWith('p3') ? '▶ 대화 듣기' : pid.startsWith('p4') ? '▶ 담화 듣기' : '▶ 듣기';
+}
+function paintPlay(){ document.querySelectorAll('[data-play]').forEach(b => { const p = b.dataset.play; b.classList.toggle('on', playing === p); b.textContent = playLabel(p); b.disabled = !S.done && S.once && S.played[p] && playing !== p; }); }
+
+/* ---------- 그리기 ---------- */
+function optsHTML(it, hideText){
+  const done = !!S.done, pk = S.picks[it.id];
+  return `<div class="opts" role="group" aria-label="${it.no}번 보기">${it.show.map((o, pos) => {
+    let cls = '', st = '';
+    if (done) { if (o === it.a) { cls = 'right'; st = pk === o ? '정답 · 내 답' : '정답'; } else if (o === pk) { cls = 'wrong'; st = '내 답'; } }
+    else if (pk === o) { cls = 'pick'; st = '선택'; }
+    const txt = hideText && !done ? '<span class="hide">· · ·</span>' : `<span lang="en">${esc(it.c[o])}</span>`;
+    return `<button class="opt ${cls}" ${done ? 'disabled' : ''} aria-pressed="${pk === o}" data-q="${it.id}" data-o="${o}"><span class="bub">${L[pos]}</span><span class="t">${txt}</span>${st ? `<span class="st">${st}</span>` : ''}</button>`;
+  }).join('')}</div>`;
+}
+function explHTML(it){
+  if (!S.done) return '';
+  const pk = S.picks[it.id], ok = pk === it.a;
+  const head = pk === undefined ? `<b style="color:var(--dunno)">안 푼 문항</b> · 정답 (${L[it.show.indexOf(it.a)]})` : ok ? '<b style="color:var(--know)">정답</b>' : `<b style="color:var(--dunno)">오답</b> · 정답 (${L[it.show.indexOf(it.a)]})`;
+  return `<div class="expl"><div>${head} · ${esc(it.x)}</div><div class="trap"><b>함정 포인트</b> ${esc(it.t)}</div></div>`;
+}
+const vis = it => !S.done || filter === 'all' || S.picks[it.id] !== it.a;
+function qHTML(it, o){
+  o = o || {};
+  if (!vis(it)) return '';
+  const stem = o.stem !== undefined ? o.stem : (it.q ? `<span class="en" lang="en">${esc(it.q)}</span>` : '');
+  return `<div class="q" id="q${it.no}"><div class="qt"><span class="qno">${String(it.no).padStart(2, '0')}</span><div class="stem">${o.pre || ''}${stem}</div></div>${optsHTML(it, o.hide)}${explHTML(it)}</div>`;
+}
+const playBtn = pid => `<div><button class="play" data-play="${pid}">${playLabel(pid)}</button></div>`;
+const graphicHTML = g => `<div class="graphic"><b lang="en">${esc(g.title)}</b><table lang="en">${g.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const scriptHTML = lines => lines.map(([s, t]) => `<p lang="en"><span class="sp">${s === 'M2' ? 'M2' : s}</span>${esc(t)}</p>`).join('');
+const docHTML = d => `<article class="doc"><div class="doc-h">${esc(d.h)}</div>${d.b.split(/\n\s*\n/).map(p => `<p lang="en">${esc(p).replace(/\n/g, '<br>').replace(/— \[(\d)\] —/g, '<span class="blank">[$1]</span>')}</p>`).join('')}</article>`;
+const partHead = (n, d) => { const p = PARTS[n - 1]; return `<div class="part-head" id="part${n}"><div class="eyebrow">${n <= 4 ? 'LC' : 'RC'} · ${p[1]}</div><h2>${p[1]} ${p[2]}</h2><p class="d">${d}</p></div>`; };
+const setItems = sid => ITEMS.filter(it => it.set === sid);
+
+function examHTML(){
+  const D = !!S.done; let h = '';
+  // Part 1
+  h += `<section class="sheet">${partHead(1, '그림을 보고 음성으로 나오는 문장 네 개 중 그림을 가장 잘 묘사한 것을 고르세요. 보기 문장은 화면에 나오지 않아요.')}` +
+    MOCK.P1.map((q, i) => { const it = BY['p1-' + i];
+      return qHTML(it, {stem: '', pre: `<figure class="pic">${ART[q.svg].replace('role="img"', `role="img" aria-label="${esc(q.alt)}"`)}</figure>${playBtn('p1-' + i)}`, hide: true}); }).join('') + '</section>';
+  // Part 2
+  h += `<section class="sheet">${partHead(2, '질문이나 말을 듣고 가장 알맞은 응답을 고르세요. 질문과 보기 모두 화면에 나오지 않아요.')}` +
+    MOCK.P2.map((q, i) => { const it = BY['p2-' + i];
+      return qHTML(it, {stem: D ? `<span class="en" lang="en">${esc(q.q)}</span>` : '<span class="muted">음성을 듣고 답을 고르세요.</span>', pre: playBtn('p2-' + i), hide: true}); }).join('') + '</section>';
+  // Part 3·4
+  [[3, MOCK.P3, '대화를 듣고 세 문항에 답하세요. 질문과 보기는 화면에 나와요. 들은 뒤 바로 풀 수 있도록 먼저 질문을 읽어 두세요.'], [4, MOCK.P4, '한 사람이 말하는 담화를 듣고 세 문항에 답하세요.']].forEach(([n, arr, d]) => {
+    h += `<section class="sheet">${partHead(n, d)}` + arr.map((s, i) => {
+      const sid = `p${n}-${i}`, its = setItems(sid), qs = its.map(it => qHTML(it)).join('');
+      if (!qs) return '';
+      const lines = n === 3 ? s.lines : [['S', s.talk]];
+      return `<div class="set"><div class="row"><b class="mono" style="font-family:var(--f-mono);font-size:13px">${its[0].no}–${its[its.length - 1].no}</b>${playBtn(sid)}</div>${s.graphic ? graphicHTML(s.graphic) : ''}${qs}${D ? `<details class="script"><summary>스크립트 보기</summary>${scriptHTML(lines)}</details>` : ''}</div>`;
+    }).join('') + '</section>';
+  });
+  // Part 5
+  h += `<section class="sheet">${partHead(5, '빈칸에 들어갈 가장 알맞은 말을 고르세요.')}` +
+    MOCK.P5.map((q, i) => { const it = BY['p5-' + i];
+      return qHTML(it, {stem: `<span class="en" lang="en">${esc(q.q).replace('___', `<span class="blank">${D ? esc(it.c[it.a]) : '&nbsp;'}</span>`)}</span>`}); }).join('') + '</section>';
+  // Part 6
+  h += `<section class="sheet">${partHead(6, '글을 읽고 빈칸에 들어갈 가장 알맞은 단어, 구, 문장을 고르세요.')}` +
+    MOCK.P6.map((s, i) => { const its = setItems('p6-' + i), qs = its.map(it => qHTML(it, {stem: `<span class="muted">빈칸 ${it.no}</span>`})).join('');
+      if (!qs) return '';
+      const body = esc(s.text).replace(/\{(\d)\}/g, (_, k) => { const it = its[+k - 1]; return `<span class="blank">${D ? esc(it.c[it.a]) : it.no}</span>`; });
+      return `<div class="set rc7"><div class="passage"><article class="doc"><div class="doc-h">${esc(s.kind)}</div>${body.split(/\n\s*\n/).map(p => `<p lang="en">${p.replace(/\n/g, '<br>')}</p>`).join('')}</article></div><div class="rcqs">${qs}</div></div>`; }).join('') + '</section>';
+  // Part 7
+  h += `<section class="sheet">${partHead(7, '지문을 읽고 질문에 가장 알맞은 답을 고르세요. 이중·삼중 지문은 두 글 이상을 함께 봐야 풀리는 문항이 있어요.')}` +
+    MOCK.P7.map((s, i) => { const its = setItems('p7-' + i), qs = its.map(it => qHTML(it)).join('');
+      if (!qs) return '';
+      return `<div class="set rc7"><div class="passage"><div class="muted" style="font-size:12.5px;font-family:var(--f-mono)">${its[0].no}–${its[its.length - 1].no} · 지문 ${s.docs.length}개</div>${s.docs.map(docHTML).join('')}</div><div class="rcqs">${qs}</div></div>`; }).join('') + '</section>';
+  // 제출
+  if (!D) h += `<section class="sheet" style="display:grid;gap:10px"><h2>다 풀었나요?</h2><p class="muted" style="margin:0">제출하면 채점되고 답을 더 고칠 수 없어요.</p><div class="row" id="subBottom">${submitHTML()}</div></section>`;
+  return h;
+}
+function submitHTML(){
+  if (!confirmSubmit) return `<button class="btn pri" data-a="submit">제출하고 채점하기</button>`;
+  const left = 100 - answered();
+  return `<div class="confirm" style="width:100%"><b>${left ? `아직 안 푼 문항이 ${left}개 있어요. ` : ''}제출할까요?</b><div class="row"><button class="btn pri" data-a="submityes">네, 제출</button><button class="btn ghost" data-a="submitno">계속 풀기</button></div></div>`;
+}
+function omrHTML(){
+  return `<div class="row" style="justify-content:space-between"><h2>답안지</h2><span class="muted" style="font-size:12.5px">번호를 누르면 그 문항으로 가요</span></div>
+  <div class="omr" style="margin-top:10px">${ITEMS.map(it => { const pk = S.picks[it.id]; let c = '', t = pk === undefined ? '' : L[it.show.indexOf(pk)];
+    if (S.done) c = pk === it.a ? 'k' : 'd'; else if (pk !== undefined) c = 'p';
+    return `<a href="#q${it.no}" data-go="${it.no}"><span>${it.no}</span><i class="${c}">${t || '&nbsp;'}</i></a>`; }).join('')}</div>`;
+}
+function resultHTML(){
+  const sc = ps => { const its = ITEMS.filter(it => ps.includes(it.part)); return [its.filter(it => S.picks[it.id] === it.a).length, its.length]; };
+  const [lc, ln] = sc([1, 2, 3, 4]), [rc, rn] = sc([5, 6, 7]), used = elapsed();
+  return `<div class="eyebrow">채점 결과</div><h2>${MOCK.title} 결과</h2>
+  <div class="kpis"><div class="kpi"><div class="v">${lc + rc}<small>/100</small></div><div class="l">전체 정답</div></div><div class="kpi"><div class="v">${lc}<small>/${ln}</small></div><div class="l">LC 정답</div></div><div class="kpi"><div class="v">${rc}<small>/${rn}</small></div><div class="l">RC 정답</div></div></div>
+  <div class="parts">${PARTS.map(([n, p, d]) => { const [a, b] = sc([n]); return `<div class="prow"><span>${p} <span class="muted">${d}</span></span><span class="tr"><i style="width:${b ? a / b * 100 : 0}%"></i></span><span class="n">${a}/${b}</span></div>`; }).join('')}</div>
+  <p class="muted" style="margin:0;font-size:13px">걸린 시간 ${mmss(used)}${used > LIMIT ? ` (권장 60분보다 ${mmss(used - LIMIT)} 초과)` : ''} · 정답 수만 보여 드리며 실제 시험 점수로 환산하지 않아요.</p>
+  <div class="row"><span class="filter" role="group" aria-label="보기 설정"><button data-f="all" aria-pressed="${filter === 'all'}">전체 문항</button><button data-f="wrong" aria-pressed="${filter === 'wrong'}">틀린 문항만</button></span>
+  ${confirmReset ? `<span>답을 모두 지우고 처음부터 풀까요?</span><button class="btn" style="border-color:var(--dunno);color:var(--dunno)" data-a="resetyes">네, 다시 풀기</button><button class="btn ghost" data-a="resetno">취소</button>` : `<button class="btn ghost" data-a="reset">처음부터 다시 풀기</button>`}</div>`;
+}
+function render(){
+  const on = !!S.start;
+  $('#once').checked = S.once; $('#once').disabled = on && !S.done;
+  $('#introBtns').innerHTML = !on ? '<button class="btn pri" data-a="start">시작하기 (60분)</button>' : S.done ? '' : `<button class="btn pri" data-a="resume">이어서 풀기</button><span class="muted" style="font-size:13px">${answered()}/100 문항 답함</span>`;
+  $('#intro').hidden = on && !!S.done;
+  $('#exam').hidden = !on; $('#omr').hidden = !on; $('#bar').hidden = !on || !!S.done;
+  $('#result').hidden = !S.done;
+  $('#mk').classList.toggle('wide', on);
+  if (S.done) $('#result').innerHTML = resultHTML();
+  if (on) { $('#exam').innerHTML = examHTML(); $('#omr').innerHTML = omrHTML(); }
+  tick(); paintPlay();
+}
+function tick(){
+  if (!S.start || S.done) return;
+  const left = LIMIT - elapsed(), t = $('#time');
+  t.textContent = left >= 0 ? mmss(left) : '+' + mmss(-left); t.classList.toggle('over', left < 0);
+  $('#cnt').textContent = `답한 문항 ${answered()}/100`;
+}
+setInterval(tick, 1000);
+function keepScroll(fn){ const y = scrollY; fn(); scrollTo(0, y); }
+
+document.addEventListener('click', e => {
+  const o = e.target.closest('.opt');
+  if (o && !o.disabled) { S.picks[o.dataset.q] = +o.dataset.o; save(); const q = o.closest('.q'); q.querySelector('.opts').outerHTML = optsHTML(BY[o.dataset.q], q.querySelector('.hide') || BY[o.dataset.q].part <= 2); $('#omr').innerHTML = omrHTML(); tick(); return; }
+  const p = e.target.closest('[data-play]'); if (p) { playSet(p.dataset.play); return; }
+  const f = e.target.closest('[data-f]'); if (f) { filter = f.dataset.f; keepScroll(render); return; }
+  const g = e.target.closest('[data-go]'); if (g) { e.preventDefault(); const el = document.getElementById('q' + g.dataset.go);
+    if (el) { el.scrollIntoView({block: 'center'}); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); } else toast('지금 보기 설정에서는 숨겨진 문항이에요.'); return; }
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  switch (b.dataset.a) {
+    case 'start': S = blank(); S.once = $('#once').checked; S.start = Date.now(); save(); render(); document.getElementById('part1').scrollIntoView(); break;
+    case 'resume': document.getElementById('part1').scrollIntoView(); break;
+    case 'submit': confirmSubmit = true; $('#subBottom') && ($('#subBottom').innerHTML = submitHTML()); if (b.id === 'subbtn') document.getElementById('subBottom').scrollIntoView({block: 'center'}); break;
+    case 'submitno': confirmSubmit = false; $('#subBottom').innerHTML = submitHTML(); break;
+    case 'submityes': confirmSubmit = false; stopAudio(); S.done = Date.now(); save(); render(); scrollTo(0, 0); break;
+    case 'reset': confirmReset = true; keepScroll(render); break;
+    case 'resetno': confirmReset = false; keepScroll(render); break;
+    case 'resetyes': confirmReset = false; stopAudio(); S = blank(); filter = 'all'; save(); render(); scrollTo(0, 0); break;
+  }
+});
+$('#once').addEventListener('change', e => { S.once = e.target.checked; save(); });
+render();
+</script>
+<script src="assets/ads.js?v=c54966ad" defer></script>
+<script>if('serviceWorker' in navigator&&/(^|\.)english800\.kr$|^localhost$|^127\.0\.0\.1$/.test(location.hostname)){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}</script>
+</body>
+</html>
